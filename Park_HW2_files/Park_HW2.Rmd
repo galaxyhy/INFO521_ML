@@ -1,0 +1,747 @@
+---
+title:  'Homework 2'
+subtitle: 'ISTA 421/INFO 521'
+author:
+- name: Jung Mee Park
+  affiliation: University of Arizona
+- name: Instructor -  Cristian Roman-Palacios
+  affiliation: School of Information, University of Arizona, Tucson, AZ
+tags: [R, RStudio, HW1]
+output: html_document
+---
+
+---------------
+
+### Objectives
+This homework sheet will assess your knowledge of basic concepts, practice, and ethics of machine learning. Please review the lectures, suggested readings, and additional resources *before* getting started on the HW.
+
+---------------
+
+#### Additional resources relevant to this HW
+
+- __R Markdown__: Please review the basic R Markdown cheat sheet in case you have any questions regarding formatting the HW: https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf.
+
+- __R__: Please review the basic R` cheat sheet in case you have any questions regarding the programming language: https://www.soa.org/globalassets/assets/Files/Edu/2018/exam-pa-base-r.pdf.
+
+- __RStudio__: Additional cheat sheets written by RStudio to help with specific `R` packages: https://www.rstudio.com/resources/cheatsheets/
+
+- __Datasets__: The following website has access to the relevant datasets from the recommended textbook: https://book.huihoo.com/introduction-to-statistical-learning/data.html
+
+
+#### The *Tidyverse*
+
+I encourage students to check out functions from packages included in the _tidyverse_ (https://www.tidyverse.org/) which greatly facilitates productivity coders. However, all the instruction will be delivered using `base` `R.` The main textbook also uses base `R` only. I will be happy to grade your code regardless whether it uses `base` `R` or functions in the tidyverse. For some steps, other packages (such as data.table) are an appropriate alternative. Most if not all the questions in this HW can be answered using the tidyverse. Please check out the “accompanying” book to our main textbook that uses packages from the tidyverse instead of base (https://emilhvitfeldt.github.io/ISLR-tidymodels-labs/index.html). For this homework, data wrangling steps could be performed using functions from dplyr and plotting from `ggplot2.` This is not a requirement for the course. However, for those interested, these two packages are excellent alternatives to base `R` that might also improve your Data Science toolbox. 
+
+
+
+### Scores
+
+Please answer the questions from the section that you’re enrolled in (labeled as either __421__ or __521__). Below is a summary of the total scores associated with this HW for undergraduates and graduate students (__2__ points per question).
+
+
+- __ISTA 421__: 14 points (undergraduate)
+- __INFO 521__: 18 points (graduate)
+- __Extra credit__: 5 points (ISTA421/INFO521).
+
+
+### Submission:
+Please follow the instructions outlined below to submit your assignment. __This HW is due at the end of the same week that is released (Sunday, 11:59 pm AZ time)__. Please get in touch with the instructor if you’re (i) having issues opening the assignment, (2) not understanding the questions or (3) having issues submitting your assignment. Note that late submissions are subject to a penalty (see late work policies in the Syllabus).
+
+
+-**Homework 2**: Please turn in a __single RMD file (this file) AND a rendered HTML__. Answers to each question should be in the relevant block of code (see below). Re-name your file to __lastname_Hw2.RMD__ before submitting. __Make sure that you can correctly render (knit) your submission without errors before turning anything in__. If a given block of code is causing you issues and you didn’t get to fix it on time, please use `eval=FALSE` in the relevant block. If you’re using additional files to render your __RMD__, please include each of them in your submission.
+
+
+### Time commitment
+Please do reach out if you’re taking more than ~15h to complete (1) this HW, (2) reading the assigned book chapters, and (3) going over the lectures. I will be happy to provide accommodations if necessary. Do not wait until the last minute to start working on the HW. In most cases, working under pressure will certainly increase the time needed to answer each of these questions. The instructor might not be 100% available on Sundays to troubleshoot with you. Remember that you can sign up for office hours with the instructor 3 times a week*.
+
+*Some weeks scheduling through Calendly will not be available. Meetings can still be scheduled by emailing the instructor.
+
+### Looking for help?
+First, please go over the relevant readings for this week. Second, if you’re still struggling with any of the questions, do some independent research (e.g. stackoverflow is a wonderful resource). __Don’t forget that your classmates will also be working on the same questions - reach out for help (check the Discussion forum in D2L for advice from other students)__. Finally, the instructor will be happy to answer any questions during office hours. You can reach out to me by email (cromanpa94@arizona.edu) or simply schedule a 15 minute meeting through Calendly (https://calendly.com/cromanpa/15min)*
+
+Please do not forget that the instructor holds office hours 3 times a week*!!
+
+*Some weeks scheduling through Calendly will not be available. Meetings can still be scheduled by emailing the instructor.
+
+
+### Grading
+_Please note that grades are NOT exclusively based on your final answers_. I will be grading the overall structure and logic of your code. Feel free to use as many lines as you need to answer each of the questions. I also highly recommend and strongly encourage adding comments (`#`) to your code. Comments will certainly improve the reproducibility and readability of your submission. Commenting your code is also good coding practice. Specifically for the course, you’ll get better feedback if the instructor is able to understand your code in detail.
+
+
+---------------
+
+# Questions
+
+This homework is divided into _two_ main parts. First, a conceptual component will review the basic concepts and general patterns of ML. This section will also include brief questions related to the ethics of ML. The second part of the homework is mostly intended to be a brief introduction to data analysis, wrangling, and basic plotting in `R.` Please note that several of these questions are modified from James _et al._ (2021). Not every question in this last section will ask you to save a new object. We will start fitting models, talking about particular parameters, and reviewing additional concepts next week!
+
+
+## Conceptual
+
+#### Question 1 (421/521)
+
+For each of four scenarios listed below, indicate whether we would generally expect the performance of a flexible statistical learning method to be better or worse than an inflexible method. Justify your answer.
+
+- The sample size (number of observations; n) is extremely large, and the number of predictors (features; p) is small.
+
+> **_Answer:_**  [BEGIN SOLUTION].
+- Larger numbers of observations would make machine learning models rather effective. Also since the number of predictor variables are small, it would be easy to train the model. Machine learning falls under the flexible statistical model. 
+
+- The number of predictors (p) is extremely large, and the number of observations (n) is small.
+
+> **_Answer:_**  [BEGIN SOLUTION].
+- Small n's and large number of predictors could require the researcher to think more about model selection. So using a well formulated logistic or even linear model with the right predictive variables would work. It would be best to avoid the flexible statistical model. 
+
+- The relationship between the predictors and response is highly non-linear.
+
+> **_Answer:_**  [BEGIN SOLUTION].
+- If the model is non-linear, a flexible model could do a better job fitting a logistic or exponential model. 
+
+- The variance of the error terms (i.e. $σ^2 = Var(ϵ)$) is extremely high.
+
+> **_Answer:_**  [BEGIN SOLUTION].
+If the error terms cover a wide range, then it might be better to try cleaning the data to understand why there is a wide variance. The inflexible statistical model can be used to see outliers. 
+
+#### Question 2 (421/521)
+
+In a few sentences, please answer the following questions to the best of your knowledge. Feel free to conduct additional research and cite your sources.
+
+- Briefly explain the “curse of dimensionality”, provide a hypothetical example illustrating the concept, and list at least one potential way that is generally used to handle it when using machine learning models.
+
+> **_Answer:_**  [BEGIN SOLUTION].
+So the curse of dimensionality refers to the phenomenon, where as you add more dimensions to the space, how those dimensions interact increase the number of possible configuarations. For example, if we were trying to classify pizza toppings, a logical way to do it would be, "Is this topping meat or vegetarian?" But say we have information about the different colors and shapes of the toppings. A tomato and be grouped together with a pepperoni. Dimensionality reduction such as PCA can be used to avoid the curse. Rewrite the variables or avoid throwing everything into the model.
+
+- Explain why the relationship between model error and complexity differs when patterns are examined using training and test datasets.
+
+> **_Answer:_**  [BEGIN SOLUTION].
+Model complexity could lead to overfitting models. It also makes interpretation difficult. The errors are evaluated in a stepwise manner so that the errors in the training data are not exacerbated in the testing dataset. 
+
+- To the best of your knowledge, distinguish between training, test, and validation datasets. Briefly describe the importance of each in the context of Machine Learning.
+
+> **_Answer:_**  [BEGIN SOLUTION].
+Training data is a random subset of the data. Training data is used to cross-validate the models. Validation dataset is used to test the models further. Usually, the training testing split is 20/80 or 30/70. It is important for ML to training datasets, so researchers avoid overfitting the model. 
+
+- Briefly discuss the consequences of overfitting and underfitting.
+
+> **_Answer:_**  [BEGIN SOLUTION].
+Overfitting a model will lead to a model with high variance. Underfitting would lead to a model with high bias. 
+
+
+#### Question 3 (421/521)
+
+Explain whether each of the scenarios presented below is a classification or regression problem. Indicate whether the situation is mostly interested in conducting inference (explaining patterns) or prediction. Finally, indicate the number of observations (n) and features (p) associated with each of the .
+
+- We collect a set of data on the top 500 firms in the US. For each firm we record profit, number of employees, industry and the CEO salary. We are interested in understanding which factors affect CEO salary.
+
+> **_Answer:_**  [BEGIN SOLUTION].
+N = 500, p = "profit, number of employees, industry and the CEO salary". This is a regression problem for interence. 
+
+- We are considering launching a new product and wish to know whether it will be a success or a failure. We collect data on 20 similar products that were previously launched by different companies. For each product we have recorded its type, whether it was a success or failure, price charged for the product, marketing budget, competition price, and ten other variables.
+
+> **_Answer:_**  [BEGIN SOLUTION].
+N = 20, p = success or failure, price charged for the product, marketing budget, competition price, and ten other variables. This is prediction problem with classification. 
+
+- We are interested in predicting the % change in the USD/Euro exchange rate in relation to the weekly changes in the world stock markets. Hence we collect weekly data for a given year. For each week we record the % change in the USD/Euro, the % change in the US market, the % change in the British market, and the % change in the German market.
+
+> **_Answer:_**  [BEGIN SOLUTION].
+Obviously this ia  prediction problem. The data should be organized around each week (n = 52) and the predictors will be the currency/market, so USD/Euro, US, British, and German markets (p = 4). A regression can be modeled with all the data. 
+
+#### Question 4 (421/521)
+
+Let's now revisit the bias-variance decomposition.
+
+- Provide a sketch of typical (squared) bias, variance, training error, test error, and irreducible (sometimes called Bayes error) error curves, on a single plot, as we go from less flexible statistical learning methods towards more flexible approaches. The x-axis should represent the amount of flexibility in the method, and the y-axis should represent the values for each curve. __There should be five main curves. Make sure to label each one__. Now, add two arrows (parallel to the X axis) indicating the direction of increase in over- and over-fitting, respectively. Finally, label the point, also in the X axis, where model complexity is optimal. [_Note: Please either draw your sketch on a piece of paper and then scan or take a photo. If you choose to do this, please insert the image using the relevant code in R Markdown AND submit the image file along with your homework._]. To insert an image in Rmd use the following structure: `![caption goes here](path to image goes here)`. You can also find more information on how to insert an image to an Rmd document in the cheat sheet linked at the begining of this document (https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf).
+
+> **_Answer:_**  [BEGIN SOLUTION].
+
+![an image from https://jooolia.github.io/IntroStatLearning/Exercises/chapter_2/chapter_2_questions.html](/Users/jungmeepark/Documents/INFO 521 spring 2022/info521_ML/jooolia.png "Text to show on mouseover")
+- Explain what the conceptual importance of acknowledging the existence of irreducible error is in the context of Machine Learning. 
+
+> **_Answer:_**  [BEGIN SOLUTION].
+Irreducible error is the bias inherent to the dataset. Sometimes even if the model claims to predict something, we have to be mindful that the data may not be perfectly representative. Therefore, we have to be cognizant of some biases in the data. 
+
+- Finally, briefly explain why each of the __five curves__ has the shape displayed.
+
+> **_Answer:_**  [BEGIN SOLUTION].
+The five curves include
+- bias: as flexibility increases, bias decreases. 
+- variance: inflexible models have higher variance. 
+- training error: Training error also decreases with increasing flexibility but our ability to make use of the findings decreases with so much training error. 
+- test error: Test error is a U-shaped curve because when their is too much flexibility, there are more dimensions to consider. 
+- V(E) irreducible error: This is the bias inherent to the data. 
+
+
+#### Question 5 (421/521)
+You will now think of some real-life applications for statistical learning.
+
+- Describe three real-life applications in which classification might be useful. Describe the response variable, as well as the potential predictors. Is the goal of each application inference or prediction? Explain your answer.
+
+> **_Answer:_**  [BEGIN SOLUTION].
+- which movies will win awards, based on predictors of actors, director, and box office success. prediction.
+- fraud detection, based on sales pattern and credit history. prediction.
+- pizza toppings, based on shape, color, and average cost. inference
+
+- Describe three real-life applications in which regression  might be useful. Describe the response, as well as the predictors. Is the goal of each application inference or prediction? Explain your answer.
+
+> **_Answer:_**  [BEGIN SOLUTION].
+- Professors' salaries at public university. Predictors = annual base salary, teaching load, and grants. Inference
+- Election results, predictor = past election results, census information like median household income, and racial demographics. Prediction
+- average age at first marriage. predictors = marriage recards, gender, age, date of marriage. Inference
+
+#### Question 6 (421/521)
+
+Let’s now review some ethical considerations associated with the development and implementation of Machine Learning algorithms. Please answer each question with as much detail as possible (one or two short paragraphs per question should suffice). Feel free to conduct additional research if you think it’s necessary. I’m looking for well-supported arguments. Your grade won’t be based on whether the instructor agrees or disagrees with your position. Instead, do your best to provide a thoughtful and clear answer.
+
+- From your perspective, describe how unbiased must an algorithm be before it can be deployed in the “real world”? Is that level commonly achieved, discussed, or examined?
+
+> **_Answer:_**  [BEGIN SOLUTION].
+This is a challengning question. I believe the algorithm may never be unbiased. However, researcher and those who are producting judgment based on these algorithms must be fully transparent with the biases in the algorithm. The troubling fact is that a lot of people who write algorithms are unaware of their own biases. 
+
+- Research labs and companies generally invest the most in improving and developing ML algorithms. Do you think that society in general should also have immediate and equal access to these developments and to their benefits? How would you balance these two goals (e.g. profit and well-being)? Similarly, do you think ML already affects (or will affect) inequalities?
+
+> **_Answer:_**  [BEGIN SOLUTION].
+I was and still am quite skeptical of many companies' exuberant adoption of ML. If we recall Facebook had facial recognition built into their app, but it was so controversial that they backtracked it. I mean, some people might have liked that feature where the app would suggest people to tag in your photos, but once we learned of how law enforcement misuse facial recognition software, people became well aware of its dangers. 
+ML definitely exacerbate inequalities, if we look at how facial recognition software has trouble recognizing individuals with darker complexions. 
+
+- What do you see as a solution for problems associated with increasing automation and efficiency, both currently and in the future?
+
+> **_Answer:_**  [BEGIN SOLUTION].
+I have so many issues with increased automation. I hate how you need to download an app for everything. When I have to call a company to discuss a problem with my internet bill, I am guided through a series of questions with punch codes and then I have to talk to a robot. Voice recognition isn't the best yet. My parents and even older sister are not that fond of e-pay and doing everything through apps. I am afraid that increased automation alienates people who are older, not as tech savvy, and non-native speakers. 
+
+- We discussed different trade-offs between models in class – one of these was related to model interpretability. Why do you think it is important for machine learning models to be interpretable? Provide at least two reasons. Among the reasons that you listed, which one do you believe is the most important? Explain.
+
+> **_Answer:_**  [BEGIN SOLUTION].
+Models with too many variables are hard to interpret. But there are so many factors that do go into an outcome. For example, if we look at average salaries of people who graduated from elite colleges we might have a false understanding that if you graduate from one of these schools, you will have a high salary. However, we are missing the fact that wealthier people tend to go to elite schools. And wealthier parents help their children find better jobs. This example might be overly simplistic because elite degrees may not even accurately predict higher salaries. Overly complex models (like a black-box of predictors) might have considered a lot of factors and even reduced the test errors, but the ultimate goal is interpretability. I prefer simpler explanations and parsimonious models. 
+
+- Now, between model performance and model interpretability: which of these two qualities do you think is more important. Explain.
+
+> **_Answer:_**  [BEGIN SOLUTION].
+I think interpretability is more important than performance especially if you are trying to convince people of your findings. My background is in sociology, so I am used to building out models. Even if neural networks and KNN can find better models, most people want to be able to explain what the model is doing. Because there is irreconcible bias in most data, the "accuracy" in performance may be due to the biases.  
+
+- Particular examples in history show that different algorithms and datasets were originally developed/simulated/compiled with goals related to increasing systemic inequalities. For instance, let’s take a quick look at the _iris_ dataset (__Fisher 1936__). First, how many hits do you get after searching for _iris_ dataset tutorial in Google (feel free to try any similar or more systematic search queries)? Based on this search, list at least two different modern uses of the dataset. Now, go over __Kozak & Łotocka (2013)__ and briefly talk about the biological realism of the dataset. Briefly comment on your thoughts related to why _Annals of eugenics_ showed interested in this dataset. Finally, given the widespread availability of data, do you think that the very frequent use of the _iris_ dataset in the field sends a particular message to society?
+
+Kozak, M., & Łotocka, B. (2013). __What should we know about the famous Iris data__. Current Science, 104(5), 579-580.
+Fisher, R. A. (1936). __The use of multiple measurements in taxonomic problems__. Annals of eugenics, 7(2), 179-188.
+
+> **_Answer:_**  [BEGIN SOLUTION].
+There is a lot of unpack here. From the two articles, I do not have enough context. The iris dataset is problematic in that iris flowers may not have sepals. Fisher was a eugenicist who believed in linear progressions and 1:1 ratios in nature. And unfortunately, those were his theories which did not map onto realitities in nature. The problem of using this dataset, supports a lie. People never question history and origins enough. Especially in data science, we have to worry about the origins of our data before we make predictions or classifications. 
+
+
+## Applied
+
+#### Question 7 (421/521)
+
+This exercise relates to the `College` data set, which can be found in the file `College.csv`. It contains a number of variables for 777 different universities and colleges in the US. The variables are:
+
+-	`Private` : Public/private indicator
+-	`Apps` : Number of applications received
+-	`Accept` : Number of applicants accepted
+-	`Enroll` : Number of new students enrolled
+-	`Top10perc` : New students from top 10 % of high school class
+-	`Top25perc` : New students from top 25 % of high school class
+-	`F.Undergrad` : Number of full-time undergraduates
+-	`P.Undergrad` : Number of part-time undergraduates
+-	`Outstate`  : Out-of-state tuition
+-	`Room.Board` : Room and board costs
+-	`Books` : Estimated book costs
+-	`Personal` : Estimated personal spending
+-	`PhD` : Percent of faculty with Ph.D.’s
+-	`Terminal` : Percent of faculty with terminal degree
+-	`S.F.Ratio` : Student/faculty ratio
+-	`perc.alumni` : Percent of alumni who donate
+-	`Expend` : Instructional expenditure per student
+-	`Grad.Rate` : Graduation rate
+
+
+Use the `read.csv()` function to read the data into `R`. Make sure that you have the directory set to the correct location for the data. If you’re not rendering the yet `Rmd` (e.g. running code chunks at a time), use the `setwd()` function to change the working directory to the relevant folder where your dataset is stored at. However, note that when you render your `.Rmd`, the working directory is set per default to the current location of the `.Rmd`. __In your final submission, please comment out any line of code in the .Rmd that modifies the working directory__. Note that if you’re not interested in downloading the dataset (which would actually make your submission more reproducible), you could simply read the dataset directly from the website using `read.csv()`. The dataset can be found in the following link: https://book.huihoo.com/introduction-to-statistical-learning/College.csv. 
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+```
+- Read dataset into `R` and save it as `college.` 
+	
+```{r}
+# BEGIN SOLUTION
+library("knitr")
+
+college <- read.csv("https://book.huihoo.com/introduction-to-statistical-learning/College.csv")
+# END SOLUTION
+```
+	
+
+- Note that the first column is just the name of each university. Although we are not going to use this column, it may be handy to have these names for later. First, assign the first column in college to the `row.names` of the `dataframe`. Please check out the `row.names()` function in `R`. Second, delete the first column of college and overwrite the same object (`college`).
+
+```{r eval=FALSE}
+# BEGIN SOLUTION
+college <- college[,-1]
+# row.names(college2) <- college[,1]
+
+# college <- as.data.frame(college2)
+######
+# library(dplyr)
+# library(tidyverse)
+# rename(college, "college.name" = "X")
+
+# END SOLUTION
+```
+
+
+- Now you should see that the first data column in `college` is `Private.` Note that another column labeled `row.names` now appears before the `Private` column. However, this is not a data column but rather the name that `R` is giving to each row. Use the `summary()` function to produce a numerical summary of the variables in the data set.
+
+
+```{r}
+# BEGIN SOLUTION
+summary(college)
+# END SOLUTION
+```
+	
+
+- Use the `pairs()` function to produce a scatterplot matrix of the first ten columns or variables of the data. Recall that you can reference the first ten columns of a matrix `A` using `A[,c(1:10)]`.
+
+
+```{r}
+# BEGIN SOLUTION
+college$Private <- as.factor(college$Private)
+pairs(college[ , 2:10],
+      col = "red",                                         # Change color
+      pch = 18,                                            # Change shape of points
+      labels = c("Apps", "Accept", "Enroll", "Top10%", "Top25%", "FT.ugrad", "PT.ugrad", "Outstate", "Room.Board"),                  # Change labels of diagonal
+      main = "Pairs Plot in R") 
+
+# plot a discrete variable 
+# change private and non-private for factor
+
+
+# END SOLUTION
+```
+	
+- Use the `plot()` function to produce side-by-side boxplots of `Outstate` versus `Private.`
+
+```{r}
+# BEGIN SOLUTION
+#create vertical side-by-side boxplots
+
+boxplot(college$Outstate ~college$Private, 
+                col='steelblue',
+        main='Number of out of state students based on private status',
+        xlab='Private College',
+        ylab='Number of out of state students')
+
+# END SOLUTION
+```
+
+
+- (Optional) Assume that you’re interested in delivering a talk at a meeting using some of the figures created in this Homework. Please install `ggplot2` (for those coming from a `Python` background, I’m introducing the `R` “analogue” to `matplotlib`). 
+
+```{r eval=FALSE}
+## Here's a quick example. I'm defining the dataset (YourDataset), and adding details such as the X and Y axes the aesthetics (aes). 
+
+##Finally, I add a new layer (a geometry layer) indicating that I'm trying to generate boxplots.
+
+ggplot(data=YourDataset, aes(x=ColumnNameXAxis, y=ColumnNameYAxis)) + 
+  geom_boxplot()
+
+##You'll have to update at least (1) YourDataset, (2) ColumnNameXAxis, and (3) ColumnNameYAxis using information from
+##Your dataset. Feel free to make additional changes (e.g. changing the colors, theme)
+```
+
+Now, improve the boxplots created before but using `ggplot2`:
+
+```{r}
+# BEGIN SOLUTION
+library(ggplot2)
+#create vertical side-by-side boxplots
+private_ofs <- ggplot(college, aes(x=Private, y=Outstate, fill=Private)) +
+  geom_boxplot() +
+  # geom_jitter() +
+  ylab("Number of Out of State Students") +
+  ggtitle('Out of state status based on Private school status') 
+private_ofs
+
+# END SOLUTION
+```
+
+
+- Create a new binary variable, called `Elite`, by binning the `Top10perc` variable to `college.` We are going to divide universities into two groups based on whether or not the proportion of students coming from the top 10% of their high school classes exceeds 50%.
+
+```{r eval=FALSE}
+# BEGIN SOLUTION
+# library(dplyr)
+# college3 <- college %>%
+#   group_by(Top10perc) %>%
+#   filter(Top10perc >= 50) %>%
+#   mutate(Elite = TRUE)
+# 
+# college2 <- merge(x= college, y= college3, all.x = TRUE)
+# 
+# college2 <- college2 %>%                             # Replace NA by FALSE
+#   replace(is.na(.), FALSE)
+# 
+# college2 <- college2[,-1]
+# row.names(college2) <- college[,1]
+# 
+# college <- as.data.frame(college2)
+
+
+college$Elite <- ifelse(college$Top10perc >= 50, TRUE, FALSE)
+
+# breaks <- c(seq(0,100, by = 50))
+# # labels <- paste("Tier", seq_len(length(breaks))
+# college2 <- college2 %>% 
+#   mutate(Elite = cut(Top10perc, breaks = breaks))
+
+# END SOLUTION
+```
+
+
+- Use the `summary()` or `table()` functions to see how many elite universities there are. Now use the `plot()` function to produce side-by-side boxplots of `Outstate` versus `Elite.`
+
+```{r}
+# BEGIN SOLUTION
+summary(college)
+
+## plot
+college$Elite <- ifelse(college$Top10perc >= 50, TRUE, FALSE)
+
+college$Elite <- as.factor(college$Elite)
+
+elite_box <- ggplot(college, aes(x=Elite, y=Outstate, fill=Elite)) +
+  geom_boxplot() +
+  # geom_jitter() +
+  ylab("Number of Out of State Students") +
+  ggtitle('Elite Status of the College') 
+elite_box
+# boxplot(college2$Outstate ~ college2$Elite)
+# END SOLUTION
+```
+	
+	
+- Use the `hist()` function to produce some histograms with diﬀering numbers of bins for a few of the quantitative variables. You may find the command `par(mfrow = c(2, 2))` useful: it will divide the print window into four regions so that four plots can be made simultaneously. Modifying the arguments to this function will divide the screen in other ways.
+
+
+```{r}
+# BEGIN SOLUTION
+par(mfrow = c(2,2))
+hist(college$Accept, breaks = 20)
+hist(college$Grad.Rate, breaks = 20)
+hist(college$Enroll, breaks = 20)
+hist(college$Expend, breaks = 20)
+
+library(dplyr)
+library(tidyr)
+college_gathered <- college %>%
+  ## remove the variables that are factors
+  select(-Private, -Elite) %>%
+  gather()
+
+ggplot(college_gathered, aes(x = value))+
+  geom_histogram(stat = "bin", bins = 40)+
+  facet_wrap(.~key, scales = "free") +
+  theme(axis.text.x = element_text(angle = 90))
+
+# END SOLUTION
+```
+	
+
+- Continue exploring the data, and provide a brief summary of what you discover. Some quick ideas: (1) explore graduation rates and briefly talk about what might be driving differences between universities. (2) Compare instructional expenditure per student and graduation rates.
+- exploratory 
+
+```{r}
+# BEGIN SOLUTION
+library(moderndive)
+grad_elite_model <- lm(Grad.Rate ~ Expend + Top10perc, data = college)
+grad_elite_model
+get_regression_table(grad_elite_model)
+get_regression_summaries(grad_elite_model)
+
+grad_model <- lm(Grad.Rate ~ Expend, data = college)
+grad_model
+get_regression_table(grad_model)
+get_regression_summaries(grad_model)
+
+elite_grad <- ggplot(college, aes(x=Elite, y=Grad.Rate, fill=Elite)) +
+  geom_violin() +
+  # geom_jitter() +
+  ylab("Graduation Rate") +
+  ylim(0,100) +
+  ggtitle('Graduation Rate based on Elite Status of the College') 
+elite_grad
+
+
+library(plotly)
+college2 <- read.csv("https://book.huihoo.com/introduction-to-statistical-learning/College.csv")
+fig <- plot_ly(data = college2, x = ~Expend, y = ~Grad.Rate, color = ~X)
+
+fig
+# expend_grad <- ggplot(college, aes(x=Expend, y=Grad.Rate, fill=Expend)) +
+#   geom_point() +
+#   geom_jitter() +
+#   ylab("Graduation Rate") +
+#   geom_text(aes(label=), size=3) + 
+#   geom_smooth(method=lm,   # Add linear regression line
+#                 se=TRUE)  +  # Don't add shaded confidence region
+#   ylim(0,100) +
+#   ggtitle('Graduation Rate based on Expenditure')
+# expend_grad
+# END SOLUTION
+```
+	
+- Are there any other features, not taken into account in the dataset, that you think might be important for understanding whether a school is classified as elite or not?
+
+> **_Answer:_**  [BEGIN SOLUTION].
+In my former job, I worked as a college counselor so there is a lot I want to say here. One of the key factors that contribute to whether a college is elite or not has somewhat to do with the size of the endowment. Also, elite colleges tend to have a high first-year retention rate. But having a high first-year retention rate should be rewarded with elite status. 
+
+#### Question 8 (521)
+
+This exercise involves the `auto` data. The dataset can be loaded as follows:
+
+```{r}
+auto <- read.table("https://book.huihoo.com/introduction-to-statistical-learning/Auto.data", header = TRUE)
+```
+
+
+- Make sure that the missing values have been removed from the data. Which of the predictors are quantitative, and which are qualitative?
+# The name of the car is qualitative; origin seems to be qualitative as well. Cylinders can be assessed as factor variables. 
+
+```{r}
+# BEGIN SOLUTION
+library(magrittr)
+auto %<>%
+  na.omit()
+# END SOLUTION
+```
+	
+- What is the range of each quantitative predictor? You can answer this using the `range()` function.
+
+```{r}
+# BEGIN SOLUTION
+auto$horsepower <- as.numeric(auto$horsepower)
+
+range2 <- function(x) {
+  range <- max(x) - min(x)
+  return(range)
+}
+# range2(auto$mpg)
+lapply(auto[, 1:7], range2)
+# END SOLUTION
+```
+	
+- What is the mean and standard deviation of each quantitative predictor?
+
+```{r}
+# BEGIN SOLUTION
+lapply(auto[, 1:7], mean)
+
+lapply(auto[, 1:7], sd)
+
+# END SOLUTION
+```
+	
+- Now remove the 10th __through__ 85th observations from `auto.` Save this as a new object called `auto2.` What is the range, mean, and standard deviation of each predictor in `auto2`?
+
+
+```{r}
+# BEGIN SOLUTION
+auto2 <- auto %>% 
+  slice(-c(10:85))
+
+lapply(auto2[, 1:7], range2)
+lapply(auto2[, 1:7], mean)
+lapply(auto2[, 1:7], sd)
+# END SOLUTION
+```
+	
+- Using the full data set (`auto`), investigate the predictors graphically, using scatterplots or other tools of your choice. Create some plots highlighting the relationships among the predictors. Briefly comment on your findings.
+
+
+```{r}
+# BEGIN SOLUTION
+
+pairs(auto[ , 1:6],
+      col = "blue",                                         # Change color
+      pch = 18,                                            # Change shape of points
+      labels = c("mpg", "cyl", "displace", "HP", "weight", "accel"),                  # Change labels of diagonal
+      main = "Pairs Plot in R") 
+# END SOLUTION
+```
+	
+> **_Answer:_**  [BEGIN SOLUTION].
+Heavier cars and cars with higher horsepower have lower MPG.
+	
+- Suppose that we were interested in predicting gas mileage (`mpg`) on the basis of the other variables. Do your plots suggest that any of the other variables might be useful in predicting `mpg`? Justify your answer.
+ 
+```{r}
+# BEGIN SOLUTION
+auto_plot <- ggplot(auto, aes(x=horsepower, y=mpg)) +
+  geom_point() +
+  geom_jitter() +
+  ylab("") +
+  # geom_text(aes(label=name), size=3) +
+  geom_smooth(method=lm,   # Add linear regression line
+                se=TRUE)  +  # Don't add shaded confidence region
+  ylim(0,100) +
+  ggtitle('Horsepower and MPG')
+auto_plot
+
+
+weight_plot <- ggplot(auto, aes(x=weight, y=mpg)) +
+  geom_point() +
+  geom_jitter() +
+  ylab("") +
+  # geom_text(aes(label=name), size=3) +
+  geom_smooth(method=lm,   # Add linear regression line
+                se=TRUE)  +  # Don't add shaded confidence region
+  ylim(0,100) +
+  ggtitle('Weight and MPG')
+weight_plot
+# END SOLUTION
+```
+	
+> **_Answer:_**  [BEGIN SOLUTION].
+I would look at horsepower and cylinder. Weight sometimes contributes to gas consumption as well.Weight and horsepower seem closely linked. 
+	
+#### Question 9 (521)
+ 
+- This exercise involves the `Boston` housing data set. To begin, load in the `Boston` data set. The `Boston` data set is part of the `ISLR2` library. Note that you should be able to install this package using the `install.packages()` function in `R`. 
+
+```{r}
+# BEGIN SOLUTION
+## Load the library
+library(ISLR2)
+data("Boston")
+# END SOLUTION
+```
+
+- How many rows are in this data set? How many columns? What do the rows and columns represent?
+
+```{r}
+# BEGIN SOLUTION
+# https://medium.com/@aqureshi/summary-statistics-of-the-boston-housing-data-set-using-r-750a2d3bd1f
+nrow(Boston) #506 rows
+length(Boston) # 13 columns
+head(Boston, 10)
+# chas appears to be a dummy variable for the Charles River. 
+# Residential information for the Boston area. 
+#
+# END SOLUTION
+```
+	
+- Make some pairwise scatterplots of the predictors (columns) in this data set. Describe your findings. Note that there’s a ton of things that you can comment on. Please select only one or two aspects that you think are relevant.
+
+```{r}
+# BEGIN SOLUTION
+
+pairs(Boston[, c(1,2,3,5, 10,12)],
+      col = "green",                                         # Change color
+      pch = 18,                                            # Change shape of points
+      labels = c("crime","zone", "indust", "nox", "tax","black"),                  # Change labels of diagonal
+      main = "Pairs Plot in R") 
+# END SOLUTION
+```
+	
+> **_Answer:_**  [BEGIN SOLUTION].
+The data has a lot of strange peaks when crime is paired with other variables such as taxes, zone, and industry levels. The original article states that there was a correction made for tax rates. But I am not sure why there are so many 666 for taxes. 
+
+- Are any of the predictors associated with per capita crime rate? If so, explain the relationship.
+
+```{r}
+# BEGIN SOLUTION
+Boston$chas <- as.factor(Boston$chas)
+crime_tax_plot <- ggplot(Boston, aes(x=tax, y=crim, color = chas)) +
+  geom_point() +
+  ylab("") +
+  # geom_text(aes(label=name), size=3) +
+  # ylim(0,100) +
+  ggtitle('Crime by Tax')
+crime_tax_plot
+# END SOLUTION
+```
+	
+> **_Answer:_**  [BEGIN SOLUTION].
+Crime and taxes have some correlation. The tax refers to the full-value property-tax rate per $10,000. I also added a fill to see whether tracts around the Charles River (indicated as 1) has an effect on crime. 
+
+- Do any of the census tracts of `Boston` appear to have particularly high crime rates? Tax rates? Pupil-teacher ratios? Comment on the range of each predictor.
+
+```{r}
+# BEGIN SOLUTION
+crime_PT_plot <- ggplot(Boston, aes(x=ptratio, y=crim, color = chas)) +
+  geom_point() +
+  ylab("") +
+  # geom_text(aes(label=name), size=3) +
+  # ylim(0,100) +
+  ggtitle('Crime rate based on pupil-teacher ratio')
+crime_PT_plot
+# END SOLUTION
+```
+	
+> **_Answer:_**  [BEGIN SOLUTION].
+The areas with very high student-teacher ratios of over 20 students per teacher have higher instances of crime. 
+
+- How many of the census tracts in this data set bound the Charles river?
+There appears to be 35. 
+
+```{r}
+# BEGIN SOLUTION
+library(dplyr)
+Boston %>%
+    filter(chas == "1") 
+
+cs <- colSums(Boston == "1") # 35
+# END SOLUTION
+```
+	
+- What is the median pupil-teacher ratio among the towns in this data set?
+
+```{r}
+# BEGIN SOLUTION
+median(Boston$ptratio, na.rm = TRUE) 
+# END SOLUTION
+```
+	
+- Which census tract of `Boston` has lowest median value of owner-occupied homes? What are the values of the other predictors for that census tract, and how do those values compare to the overall ranges for those predictors? Comment on your findings.
+
+```{r}
+# BEGIN SOLUTION
+ordered_df <- Boston[order(Boston$medv), ]
+
+head(ordered_df)
+# END SOLUTION
+```
+
+> **_Answer:_**  [BEGIN SOLUTION].
+The census tracts with the lowest median value of owner-occupied homes were 399, 406, 401, 400, 415, and 490. These areas were not by the Charles River and more than 20 students per teacher. Crimes were generally high in these areas except in tract 490. 
+
+- In this data set, how many of the census tracts average more than seven rooms per dwelling? More than eight rooms per dwelling? Comment on the census tracts that average more than eight rooms per dwelling.
+
+```{r}
+# BEGIN SOLUTION
+Boston %>%
+  group_by(rm) %>% 
+  filter(rm >= 7) # 64
+
+Boston %>%
+  group_by(rm) %>% 
+  filter(rm >= 8) # 13 
+# END SOLUTION
+```
+
+> **_Answer:_**  [BEGIN SOLUTION].
+64 census tracks that more than 7 rooms per dwelling. 13 had more than 8 rooms per dwelling. 2 of the 13 homes were by the Charles. Crime rates were very low in these areas with larger homes. 
+
+Extra credit (421/521; 5 points)
+
+Re-assessing the `Boston` dataset
+
+- The `Boston` dataset is now part of the standard training sets implemented in many libraries and packages across different languages (e.g. `scikit-learn` ["recently" deprecated] and `Tensorflow` in `Python`; `MASS` in `R`). Did any of the questions (or your answers) listed above raise any red flags about the dataset? (_421 students: if you’re not answering Question 9, please check the documentation associated with the `ISLR2::Boston` dataset_)
+
+> **_Answer:_**  [BEGIN SOLUTION].
+How the researchers referred to the proportion of Black people in the article or just the dataset in itself is odd. Also, Gilley (1996) noted that the dataset from 1978 included inaccurate values for median home value variable (Cantaro, 2020). Housing in America in general should not be framed as a choice. Harrison and Rubinfeld premised the whole article on finding better air quality as if many residents had a choice as to where they could live. For African Americans, redlining removed their ability to live in whichever neighborhod they chose. The variable on lower status people do not seem appropriate either. 
+
+https://towardsdatascience.com/things-you-didnt-know-about-the-boston-housing-dataset-2e87a6f960e8
+
+- This dataset, originally published in __Harrison and Rubinfeld (1978)__, was primarily compiled to examine the effects of environmental factors in driving spatial patterns of the housing market. To date, different packages have implemented alternative versions of the features sampled in the dataset. Please compare the features (and their descriptions) in Table IV from the original study (__Harrison and Rubinfeld, 1978__) to the features used in the Book’s dataset (for instance, use `?ISLR2::Boston`). If the two datasets are not equivalent in their features, briefly (1) discuss the potential motives behind these discrepancies, and (2) comment on whether dropping particular columns was the right solution? Feel free to comment on the potential differences (conceptual and social) associated with training models in each of these two datasets.
+
+Harrison Jr, D., & Rubinfeld, D. L. (1978). __Hedonic housing prices and the demand for clean air. Journal of environmental economics and management__, 5(1), 81-102.
+
+> **_Answer:_**  [BEGIN SOLUTION].
+Harrison and Rubinfeld made adjustments to the tax variable which make it hard to interpret. I would also like to know about how the proxy for industry was created. Perhaps most problematic is the variable, LSTAT, where the researchers decided who was lower status based on level of education among half of the residents. I decided to drop some variables in my observation just for the sake of time. But looking at everything now, I am glad I didn't try to meddle with variables like LSTAT. 
+
+
