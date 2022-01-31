@@ -94,18 +94,22 @@ Assume that you collected a dataset of 100 observations containing a single pred
 a) Suppose that the true relationship between $X$ and $Y$ is linear, i.e. $Y = β_{0} + β_{1}X + ϵ$. Consider the training residual sum of squares (_RSS_) for the linear regression, and also the training _RSS_ for the cubic regression. Would we expect one to be lower than the other, would we expect them to be the same, or is there not enough information to tell? Justify your answer.
 
 > **_Answer:_**  [BEGIN SOLUTION].
+RSS would decrease as model flexibility increases as in the cubic model. 
 
 b) Answer part (a) using the test rather than training RSS.
+RSS will probably be higher for the test RSS because the underlying model is linear. 
 
 > **_Answer:_**  [BEGIN SOLUTION].
 
 c) Suppose that the true relationship between $X$ and $Y$ is not linear. However, we don’t know how far it is from linear. Consider the training _RSS_ for the linear regression, and also the training _RSS_ for the cubic regression. Would we expect one to be lower than the other, would we expect them to be the same, or is there not enough information to tell? Justify your answer.
 
 > **_Answer:_**  [BEGIN SOLUTION].
+Flexible model will allow the model to fit more closely . 
 
 d) Answer (c) using test rather than training _RSS._
 
 > **_Answer:_**  [BEGIN SOLUTION].
+Because the true relationship is unknown, the training dataset may have overfit the model leading to a higher RSS in the testig data. 
 
 #### Question 3 (421/521)
 
@@ -116,15 +120,22 @@ a) Discuss the implications that uncertainty in $X$ would have on parameter esti
 b) Provide a brief discussion on the concept of regression dilution.
 
 > **_Answer:_**  [BEGIN SOLUTION].
+Also known as a regression attenuation, regression diluation biases slope in regressions towards 0. This may underestimate the true values and cause errors in the independent variable. 
 
 c) Are there any linear regression models that account for uncertainty in $X$ and $Y$? Please do some independent research and cite your sources.
 
 > **_Answer:_**  [BEGIN SOLUTION].
+Bayesian factors for GLM's (Raftery, 1996) and Bayesian bootstrapping (Wang et al 2015) make some considerations for model uncertainty, especially in generalised models. 
+
+Raftery, A. (1996). Approximate Bayes factors and accounting for model uncertainty in generalised linear models. Biometrika, 83(2), 251–266. https://doi.org/10.1093/biomet/83.2.251
+
+Wang, C., Dominici, F., Parmigiani, G., & Zigler, C. M. (2015). Accounting for uncertainty in confounder and effect modifier selection when estimating average causal effects in generalized linear models. Biometrics, 71(3), 654–665. https://doi.org/10.1111/biom.12315
 
 
 d) Distinguish between least squares and maximum likelihood in the context of linear regression models.
 
 > **_Answer:_**  [BEGIN SOLUTION].
+Given a scatterplot with normally distributed errors, a linear line can be drawn. The point from the model line to the true value is a distance that can be summed up and squared. The Maximum likelihood estimators can be the same for the intercept and coefficients. Maximum likelihood chooses estimates that fits the parameters of the sample data. 
 
 ## Applied
 
@@ -150,12 +161,12 @@ summary(mpg_lm)
 i. Is there a relationship between the predictor and the response?
 
 > **_Answer:_**  [BEGIN SOLUTION].
-Yes.
+Yes. It appears to be a negative relationship.
 
 ii. How strong is the relationship between the predictor and the response? Focus on the _RSE_, estimated $R^2$, and _slope._
 
 > **_Answer:_**  [BEGIN SOLUTION].
-The relationship is very strong.
+The relationship is fairly strong. The adjusted R-sq is only 0.59, which means only some of variation in mpg is explained through the horsepower predictor.  
 
 iii. Is the relationship between the predictor and the response positive or negative?
 
@@ -177,7 +188,7 @@ predict(mpg_lm, data.frame(hp = (c(98))), interval = "prediction")
 v. Now, please briefly explain the main use of inverse predictions. List at least two practical examples.
 
 > **_Answer:_**  [BEGIN SOLUTION].
-
+The inverse prediction can be used to check the model fit, especially if a graph was made and fitted to a line. If the model gives us a result that is not similar to the plot, then we have to adjust the models. Sometimes you may not have a lot of data points, so to create a graph, you may need to generate some observations. 
 
 vi. Finally, use `chemCal::inverse.predict` (or any function of your preference) to infer horsepower from the same mpg value predicted in (__iv__). Comment on your results.
 
@@ -210,10 +221,13 @@ mtcars_plot
 ```
 
 
-c) Use the `plot()` function to produce diagnostic plots of the least squares regression fit. Comment on any problems you see with the fit. Feel free to use alternatives such as `ggfortify:autoplot`.
+c) Use the `plot()` function to produce diagnostic plots of the least squares regression fit. Comment on any problems you see with the fit. Feel free to use alternatives such as `ggfortify::autoplot`.
 
 ```{r}
 # BEGIN SOLUTION
+# library(ggfortify)
+# ggfortify::autoplot(mpg_lm, geom = 'point')
+plot(mpg_lm)
 
 # END SOLUTION
 ```
@@ -248,7 +262,18 @@ b) Compute the matrix of correlations between the variables using the function `
 
 ```{r}
 # BEGIN SOLUTION
-
+library(corrplot)
+M <- cor(auto[, 1:7])
+corrplot(M, method = 'number', col = 'black', cl.pos = 'n')
+auto$horsepower <- as.integer(auto$horsepower)
+corrplot(cor((auto[, c(1, 2, 3, 5, 6, 7, 8)])),        # Correlation matrix
+         method = "shade", # Correlation plot method
+         type = "full",    # Correlation plot style (also "upper" and "lower")
+         diag = TRUE,      # If TRUE (default), adds the diagonal
+         tl.col = "black", # Labels color
+         bg = "white",     # Background color
+         title = "",       # Main title
+         col = NULL)       # Color palette
 # END SOLUTION
 ```
 
@@ -257,6 +282,8 @@ c) Use the `lm()` function to perform a multiple linear regression with mpg as t
 ```{r}
 # BEGIN SOLUTION
 
+auto_lm <- lm(mpg ~ cylinders + displacement + horsepower + weight + acceleration + year + origin, data = auto)
+summary(auto_lm)
 # END SOLUTION
 ```
 
@@ -264,45 +291,64 @@ c) Use the `lm()` function to perform a multiple linear regression with mpg as t
 i. Is there a significant association between the predictors and the response?
 
 > **_Answer:_**  [BEGIN SOLUTION].
-
+Yes. But not for all variables. 
 
 ii. Which predictors appear to have a statistically significant relationship to the response?
 
 > **_Answer:_**  [BEGIN SOLUTION].
-
+Displacement, weight, year, and origin have an effect on MPG.
 
 iii. What does the coefficient for the year variable suggest?
 
 > **_Answer:_**  [BEGIN SOLUTION].
-
+Later car models have improved mpg. 
 
 (d) Use the `plot()` function to produce diagnostic plots of the linear regression fit. Again, feel free to use any other package or function to create these plots. Comment on any problems you see with the fit. Do the residual plots suggest any unusually large outliers? Does the leverage plot identify any observations with unusually high leverage?
 
 ```{r}
 # BEGIN SOLUTION
+plot(auto_lm)
 
 # END SOLUTION
 ```
 
 > **_Answer:_**  [BEGIN SOLUTION].
+Yes, the leverage vs. residual graph does help point out outliers. 
 
 
 (e) Use the `*` and `:` symbols to fit linear regression models with interaction effects. Please explore a few different models (~3–4 models). Do any interactions appear to be statistically significant in any of the models you examined? Feel free to use stepwise selection if interested (e.g. `MASS::stepAIC`, or check out some basic examples in `caret`: https://github.com/topepo/caret/blob/master/RegressionTests/Code/lmStepAIC.R). Your model exploration does not have to be extensive by any means.
 
 ```{r}
 # BEGIN SOLUTION
+hp_weight_lm <- lm(mpg ~ horsepower*weight, data = auto)
+summary(hp_weight_lm)
 
+disp_weight_lm <- lm(mpg ~ displacement*weight, data = auto)
+summary(disp_weight_lm)
+
+disp_accel_lm <- lm(mpg ~ displacement*acceleration, data = auto)
+summary(disp_accel_lm)
+
+hp_accel_lm <- lm(mpg ~ horsepower*acceleration, data = auto)
+summary(hp_accel_lm)
 # END SOLUTION
 ```
 
 > **_Answer:_**  [BEGIN SOLUTION].
-
+When interpreting models with an interaction effect, the acceleration alone is significant ans so is the interaciton of hp and acceleration. The R-squared is .68 for the lm(formula = mpg ~ horsepower * acceleration, data = auto). 
 
 (f) Try a few different transformations of the variables, such as `log(X)`, `sqrt(X)`, $X^2$. Comment on your findings.
 
 ```{r}
 # BEGIN SOLUTION
+sq_year_lm <- lm(mpg ~ year + I(year^2), data = auto)
+summary(sq_year_lm)
 
+log_year_lm<- lm(mpg ~ year + log(year), data = auto)
+summary(log_year_lm)
+
+sq_accel_lm <- lm(mpg ~ year + I(acceleration^2), data = auto)
+summary(sq_accel_lm)
 # END SOLUTION
 ```
 
@@ -315,6 +361,7 @@ In this exercise you will create some simulated data and will fit simple linear 
 
 ```{r}
 # BEGIN SOLUTION
+set.seed(1)
 
 # END SOLUTION
 ```
@@ -324,7 +371,9 @@ a) Using the rnorm() function, create a vector, `x`, containing 100 observations
 
 ```{r}
 # BEGIN SOLUTION
-
+LO <- 0
+UP <- 1
+x <- pmax(LO, pmin(UP, rnorm(100)))
 # END SOLUTION
 ```
 
@@ -333,7 +382,9 @@ b) Using the `rnorm()` function, create a vector, `eps`, containing 100 observat
 
 ```{r}
 # BEGIN SOLUTION
-
+library(truncnorm)
+var_sq <- .25*.25
+eps <- rtruncnorm(n=100, a=0, b=0.25, mean=0, sd=var_sq)
 # END SOLUTION
 ```
 
@@ -342,34 +393,53 @@ c) Using `x` and `eps`, generate a vector `y` according to the model $Y = -1 + 0
 
 ```{r}
 # BEGIN SOLUTION
-
+y <- -1 + 0.5*x + eps
+y
 # END SOLUTION
 ```
 
-
+The length of y is 100. The intercept is -1 and the B1 is 0.5.
 
 d) Create a scatterplot displaying the relationship between `x` and `y`. Comment on what you observe.
 
 ```{r}
 # BEGIN SOLUTION
+plot(x,y)
 
 # END SOLUTION
 ```
+The relationship appears fairly linear. Many observations fall where x = 0 or x = 1. 
 
 e) Fit a least squares linear model that relates y and `x`. Comment on the model obtained. How do the estimated coefficients (slope and intercept) compare to the true values used to simulate the data?
 
 ```{r}
 # BEGIN SOLUTION
-
+xy_lm <- lm(y ~ x)
+summary(xy_lm)
 # END SOLUTION
 ```
-
+Adjusted R-sq adjusts for number of predictors. 
 
 f) Display the least squares line on the scatterplot obtained in (d). Draw the estimated regression line on the plot, in a different color. Use the `legend()` command to create an appropriate legend. Feel free to use `ggplot2` or any other framework in R.
 
 ```{r}
 # BEGIN SOLUTION
+# plot(x,y)
+# abline(xy_lm) 
+# abline(a = -1, b = 0.5, col = "red")  
+# legend("topleft",
+#   legend="Least Squares Fit",
+#   lty=1,
+#   lwd=3)
 
+ggp <- ggplot(xy_lm, aes(x, y, color = "red")) +      # Create basic ggplot
+  geom_point() + 
+  geom_abline(data = xy_lm, aes(slope = 0.5, intercept = -1)) +
+  geom_smooth(method=lm,   # Add linear regression line
+                se=TRUE) +
+  theme(legend.position="left")
+
+ggp 
 # END SOLUTION
 ```
 
@@ -378,45 +448,79 @@ g) Now fit a polynomial regression model that predicts $y$ using $x$ and $x^2$. 
 
 ```{r}
 # BEGIN SOLUTION
-
+x_sq_lm <- lm(y ~ x^2)
+summary(x_sq_lm)
 # END SOLUTION
 ```
 
 > **_Answer:_**  [BEGIN SOLUTION].
-
+Not partcularly. The R-squared is similar in the linear and the polymomial model. 
 
 h) Repeat (a)–(f) after modifying the data generation process in such a way that there is less noise in the data. The model analyzed in this section,, should remain the same. You can do this by decreasing the variance of the normal distribution used to generate the error term ϵ in (b). Describe your results.
 
 ```{r}
 # BEGIN SOLUTION
+less_var_sq <- .15*.15
+eps2 <- rtruncnorm(n=100, a=0, b=0.25, mean=0, sd=less_var_sq)
+y2 <- -1 + 0.5*x + eps2
+plot(x,y2)
 
+xy2_lm <- lm(y2 ~ x)
+summary(xy2_lm)
+
+ggp2 <- ggplot(xy_lm, aes(x, y2, color = "y2")) +      # Create basic ggplot
+  geom_point() + 
+  geom_abline(data = xy2_lm, aes(slope = 0.5, intercept = -1)) +
+  geom_smooth(method=lm,   # Add linear regression line
+                se=TRUE) +
+  theme(legend.position="left")
+
+ggp2 
 # END SOLUTION
 ```
 
 > **_Answer:_**  [BEGIN SOLUTION].
-
+The values with less variance fit closer to the abline. 
 
 i) Repeat (a)–(f) after modifying the data generation process in such a way that there is more noise in the data. The model analyzed in this section ($Y = -1 + 0.5X + ϵ$) should remain the same. You can do this by increasing the variance of the normal distribution used to generate the error term $ϵ$ in (b). Describe your results.
 
 ```{r}
 # BEGIN SOLUTION
+more_var_sq <- .5*.5
+eps3 <- rtruncnorm(n=100, a=0, b=0.25, mean=0, sd=more_var_sq)
+y3 <- -1 + 0.5*x + eps3
+plot(x,y3)
 
+xy3_lm <- lm(y3 ~ x)
+summary(xy3_lm)
+
+ggp3 <- ggplot(xy_lm, aes(x, y3, color = "y3")) +      # Create basic ggplot
+  geom_point() + 
+  geom_abline(data = xy3_lm, aes(slope = 0.5, intercept = -1)) +
+  geom_smooth(method=lm,   # Add linear regression line
+                se=TRUE) +
+  theme(legend.position="left")
+
+ggp3
 # END SOLUTION
 ```
 
 > **_Answer:_**  [BEGIN SOLUTION].
-
+Values with more variance had a geom_smooth line further from the abline.
 
 j) What are the confidence intervals for $β_0$ and $β_1$ based on the original data set, the noisier data set, and the less noisy data set? Comment on your results.
 
 ```{r}
 # BEGIN SOLUTION
+confint(xy_lm)
+confint(xy2_lm)
+confint(xy3_lm)
 
 # END SOLUTION
 ```
 
 > **_Answer:_**  [BEGIN SOLUTION].
-
+The gap between the conf. intervals for the orginal model was .021. For the model with less noise, the range of values within the confidence intervals was less (0.0068). For the model with more noise, values that bookend the confidence intervals was highest at 0.04.
 
 #### Question 7 (521)
 This question focuses on the collinearity problem.
@@ -427,13 +531,15 @@ set.seed(1)
 x1 <- runif(100)
 x2 <- 0.5 * x1 + rnorm(100) / 10
 y <- 2 + 2 * x1 + 0.3 * x2 + rnorm(100)
+Q7_data <- cbind.data.frame(x1,x2,y)
 ```
 
 The last line corresponds to creating a linear model in which $y$ is a function of $x_1$ and $x_2$. Write out the form of the linear model. What are the regression coefficients?
 
 ```{r}
 # BEGIN SOLUTION
-
+multi_lm <- lm(y ~ x1 + x2)
+summary(multi_lm)
 # END SOLUTION
 ```
 
@@ -443,6 +549,21 @@ The last line corresponds to creating a linear model in which $y$ is a function 
 ```{r}
 # BEGIN SOLUTION
 
+# df %>% 
+#   gather(which_z, value, -x, -y) %>% 
+#   ggplot(aes(x, y, fill = value)) +
+#     geom_raster() +
+#     facet_wrap(~ which_z)
+
+
+ggp4 <- ggplot(multi_lm, aes(x1, y, fill = x2)) +      # Create basic ggplot
+  geom_point(aes(color = x2)) + 
+  # geom_abline(data = multi_lm, aes(slope = 0.5, intercept = -1)) +
+  geom_smooth(method=lm,   # Add linear regression line
+                se=TRUE) 
+  # scale_fill_gradient2(low = "red", mid = "white", high = "green") 
+
+ggp4
 # END SOLUTION
 ```
 
@@ -450,51 +571,80 @@ The last line corresponds to creating a linear model in which $y$ is a function 
 
 ```{r}
 # BEGIN SOLUTION
+multi_lm <- lm(y ~ x1 + x2)
+residuals(multi_lm)
 
+summary(multi_lm)
 # END SOLUTION
 ```
 
 > **_Answer:_**  [BEGIN SOLUTION].
+You cannot reject the null hypothesis because the predictors are not statistically significant. Also the R squared is very small. 
 
 (d) Now fit a least squares regression to predict $y$ using only $x_1$. Comment on your results. Can you reject the null hypothesis $H_0$: $β_1$ = 0?
 
 ```{r}
 # BEGIN SOLUTION
-
+x1_lm <- lm(y ~ x1, data = Q7_data)
+summary(x1_lm)
 # END SOLUTION
 ```
 
 > **_Answer:_**  [BEGIN SOLUTION].
+You cannot reject the null hypothesis, although the R-squared is higher. 
 
 (e) Now fit a least squares regression to predict $y$ using only $x_2$. Comment on your results. Can you reject the null hypothesis $H_0$: $β_1$ = 0?
 
 ```{r}
 # BEGIN SOLUTION
-
+x2_lm <- lm(y ~ x2, data = Q7_data)
+summary(x2_lm)
 # END SOLUTION
 ```
 
 > **_Answer:_**  [BEGIN SOLUTION].
-
+You cannot reject the null hypothesis. 
 
 (f) Do the results obtained in (c)–(e) contradict each other? Explain your answer.
 
 > **_Answer:_**  [BEGIN SOLUTION].
+No. From my data, I saw that no single part was significant and the multiple regression model did not show either of the variables to be significant. 
 
 (g) Now suppose we obtain one additional observation, which was unfortunately mismeasured. Re-fit the linear models from (c) to (e) using this new data. What effect does this new observation have on each of the models? In each model, is this observation an outlier? A high-leverage point? Both? Explain your answers.
 
 > **_Answer:_**  [BEGIN SOLUTION].
+```{r}
 
+x1 <- append(x1, 2)  
+x2 <- append(x2, 2)
+y <- append(y, 1)
+
+```
+The new observations will be seen as outliers. 
+```{r}
+multi_lm2 <- lm(y ~ x1 + x2)
+summary(multi_lm2)
+```
+Somehow with the new observations, my model looks significant with a higher R squared of 0.58. The predictors were significant at the .0001 level.
+ 
 #### Question 8 (421/521)
 
 It is claimed that in the case of simple linear regression of $Y$ onto $X$, the $R^2$ statistic is equal to the square of the correlation between $X$ and $Y$. Generate some synthetic data and show that this is the case.
 
 ```{r}
 # BEGIN SOLUTION
+set.seed(2)
+new_x <- rtruncnorm(n=100)
+new_y <- rtruncnorm(n=100)
 
+new_lm <- lm(new_y ~ new_x)
+summary(new_lm)
+
+rev_lm <- lm(new_x ~ new_y)
+summary(rev_lm)
 # END SOLUTION
 ```
-
+The new_lm had a multiple R-sq of 0.00764. Yes, the rev_lm also had a multiple R-sq of 0.00764. 
 
 ## Extra credit
 
