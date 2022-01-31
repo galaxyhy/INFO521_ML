@@ -97,9 +97,9 @@ a) Suppose that the true relationship between $X$ and $Y$ is linear, i.e. $Y = Î
 RSS would decrease as model flexibility increases as in the cubic model. 
 
 b) Answer part (a) using the test rather than training RSS.
-RSS will probably be higher for the test RSS because the underlying model is linear. 
 
 > **_Answer:_**  [BEGIN SOLUTION].
+RSS will probably be higher for the test RSS because the underlying model is linear. 
 
 c) Suppose that the true relationship between $X$ and $Y$ is not linear. However, we donâ€™t know how far it is from linear. Consider the training _RSS_ for the linear regression, and also the training _RSS_ for the cubic regression. Would we expect one to be lower than the other, would we expect them to be the same, or is there not enough information to tell? Justify your answer.
 
@@ -116,6 +116,7 @@ Because the true relationship is unknown, the training dataset may have overfit 
 a) Discuss the implications that uncertainty in $X$ would have on parameter estimates based on linear regression models. Should we care about error in $X$ when fitting OLS regressions? 
 
 > **_Answer:_**  [BEGIN SOLUTION].
+Uncertainty would affect the parameter estimates. Bootstrapping could be used to quantify uncertainty. The standard errors provide clues on how the model fit might vary after repeated sampling. Standard errors are used to compute confidence intervals.
 
 b) Provide a brief discussion on the concept of regression dilution.
 
@@ -135,7 +136,7 @@ Wang, C., Dominici, F., Parmigiani, G., & Zigler, C. M. (2015). Accounting for u
 d) Distinguish between least squares and maximum likelihood in the context of linear regression models.
 
 > **_Answer:_**  [BEGIN SOLUTION].
-Given a scatterplot with normally distributed errors, a linear line can be drawn. The point from the model line to the true value is a distance that can be summed up and squared. The Maximum likelihood estimators can be the same for the intercept and coefficients. Maximum likelihood chooses estimates that fits the parameters of the sample data. 
+Given a scatterplot with normally distributed errors, a linear line can be drawn. The point from the model line to the true value is a distance that can be summed up and squared. The estimation of parameters in least squares is based on the RSS. The Maximum likelihood estimators can be the same for the intercept and coefficients. Maximum likelihood chooses estimates that fits the parameters of the sample data. Maximum likelihood is more general and can be appropriate for non-linear cases. Least squares is mostly applied to show linear relationships.
 
 ## Applied
 
