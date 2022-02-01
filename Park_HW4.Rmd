@@ -1,0 +1,272 @@
+---
+title:  'Homework 4'
+subtitle: 'ISTA 421/INFO 521'
+author:
+- name: Student - Jung Mee Park
+  affiliation: University of Arizona
+- name: Instructor -  Cristian Roman-Palacios
+  affiliation: School of Information, University of Arizona, Tucson, AZ
+tags: [R, RStudio, HW4]
+output: html_document
+---
+
+---------------
+
+### Objectives
+This homework sheet will help reviewing the basic concepts associated with classification models. Please review the lectures, suggested readings, and additional resources before getting started on the HW.
+
+---------------
+
+#### Additional resources relevant to this HW
+
+- __R Markdown__: Please review the basic R Markdown cheat sheet in case you have any questions regarding formatting the HW: https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf.
+
+- __R__: Please review the basic R` cheat sheet in case you have any questions regarding the programming language: https://www.soa.org/globalassets/assets/Files/Edu/2018/exam-pa-base-r.pdf.
+
+- __RStudio__: Additional cheat sheets written by RStudio to help with specific `R` packages: https://www.rstudio.com/resources/cheatsheets/
+
+- __Datasets__: The following website has access to the relevant datasets from the recommended textbook: https://book.huihoo.com/introduction-to-statistical-learning/data.html
+
+
+#### The *Tidyverse*
+
+I encourage students to check out functions from packages included in the `tidyverse` (https://www.tidyverse.org/) which greatly facilitates the productivity of novice coders. However, all instructions will be delivered using `Base` `R`. The main textbook also uses base `R` only. I will be happy to grade your code regardless whether it uses base `R` or functions in the `tidyverse.` For some steps, other packages (such as `data.table`) are an appropriate alternative. Most if not all the questions in this HW can be answered using the tidyverse. Please check out the “accompanying” book to our main textbook that uses packages from the tidyverse instead of base (https://emilhvitfeldt.github.io/ISLR-tidymodels-labs/index.html). For this chapter, please follow the instructions in the following site: https://emilhvitfeldt.github.io/ISLR-tidymodels-labs/linear-regression.html. 
+
+
+
+### Scores
+
+Please answer the questions from the section that you’re enrolled in (labeled as either __421__ or __521__). Below is a summary of the total scores associated with this HW (2 points per question).
+
+
+- __ISTA 421__: 8 points (undergraduate)
+- __INFO 521__: 10 points (graduate)
+- __Extra credit__: 5 points (graduate)
+
+
+### Submission:
+Please follow the instructions outlined below to submit your assignment. __This HW is due at the end of the same week that is released (Sunday, 11:59 pm AZ time)__. Please get in touch with the instructor if you’re (i) having issues opening the assignment, (2) not understanding the questions or (3) having issues submitting your assignment. Note that late submissions are subject to a penalty (see late work policies in the Syllabus).
+
+
+-**Homework 4**: Please turn in a __single RMD file (this file) AND a rendered HTML__. Answers to each question should be in the relevant block of code (see below). Re-name your file to __lastname_Hw4.RMD__ before submitting. __Make sure that you can correctly render (knit) your submission without errors before turning anything in__. If a given block of code is causing you issues and you didn’t get to fix it on time, please use `eval=FALSE` in the relevant block. If you’re using additional files to render your __RMD__, please include each of them in your submission.
+
+
+### Time commitment
+Please do reach out if you’re taking more than ~18h to complete (1) this HW, (2) reading the assigned book chapters, and (3) going over the lectures. I will be happy to provide accommodations if necessary. Do not wait until the last minute to start working on the HW. In most cases, working under pressure will certainly increase the time needed to answer each of these questions. The instructor might not be 100% available on Sundays to troubleshoot with you. Remember that you can sign up for office hours with the instructor 3 times a week.
+
+### Looking for help?
+First, please go over the relevant readings for this week. Second, if you’re still struggling with any of the questions, do some independent research (e.g. stackoverflow is a wonderful resource). __Don’t forget that your classmates will also be working on the same questions - reach out for help (check the Discussion forum in D2L for advice from other students)__. Finally, the instructor will be happy to answer any questions during office hours. You can reach out to me by email (cromanpa94@arizona.edu) or simply schedule a 15 minute meeting through Calendly (https://calendly.com/cromanpa/15min)*
+
+Please do not forget that the instructor holds office hours 3 times a week!!
+
+
+### Grading
+_Please note that grades are NOT exclusively based on your final answers_. I will be grading the overall structure and logic of your code. Feel free to use as many lines as you need to answer each of the questions. I also highly recommend and strongly encourage adding comments (`#`) to your code. Comments will certainly improve the reproducibility and readability of your submission. Commenting your code is also good coding practice. Specifically for the course, you’ll get better feedback if the instructor is able to understand your code in detail.
+
+
+---------------
+
+# Questions
+
+This homework is divided into two main parts. First, a conceptual component will review the basic concepts related to classification models. The second part of the homework is mostly intended to be a brief introduction to fitting and analyzing classifiers in `R`. Several of these questions are modified from James et al. (2021).
+
+
+## Conceptual
+
+#### Question 1 (421/521)
+
+Let’s examine the differences between LDA and QDA.
+
+  a) If the Bayes decision boundary is linear, do we expect LDA or QDA to perform better on the training set? What about in the test set?
+
+> **_Answer:_**  [BEGIN SOLUTION].
+
+  b) If the Bayes decision boundary is non-linear, do we expect LDA or QDA to perform better on the training set? On the test set?
+
+> **_Answer:_**  [BEGIN SOLUTION].
+
+  c) In general, as the sample size n increases, do we expect the test prediction accuracy of QDA relative to LDA to improve, decline, or be unchanged? Why?
+
+> **_Answer:_**  [BEGIN SOLUTION].
+
+
+  d) __True or False__: Even if the Bayes decision boundary for a given problem is linear, we will probably achieve a superior test error rate using QDA rather than LDA because QDA is flexible enough to model a linear decision boundary. __Justify your answer__.
+
+> **_Answer:_**  [BEGIN SOLUTION].
+
+
+#### Question 2 (421/521)
+
+
+In relation to the odds and the Default dataset discussed in the book and lecture,
+
+  a) On average, what fraction of people with an odds of `0.37` of defaulting on their credit card payment will in fact default?
+  
+> **_Answer:_**  [BEGIN SOLUTION].
+
+  
+  b) Suppose that an individual has a `16%` chance of defaulting on their credit card payment. What are the odds that they will default?
+
+> **_Answer:_**  [BEGIN SOLUTION].
+
+
+#### Question 3 (421/521)
+
+Suppose that we take a data set, divide it into equally sized training and test sets, and then try out two different classification procedures. First, we use logistic regression and get an error rate of `20%` on the training data and `30%` on the test data. Next we use 1-nearest neighbors (i.e. `K=1`) and get an average error rate (averaged over both test and training data sets) of `18%`. Based on these results, which method should we prefer to use for classification of new observations? Why?
+
+> **_Answer:_**  [BEGIN SOLUTION].
+
+
+## Applied
+
+Please note that some of the questions outlined below make suggestions on potential functions to be used in the answers. Feel free to use any other function. These are just a reference. For those interested in improving their skills, I would recommend going over the information in the following book for _tidyverse_ (https://emilhvitfeldt.github.io/ISLR-tidymodels-labs/linear-regression.html), using _caret_ to answer some of the questions (https://topepo.github.io/caret/), or _mikropml_ (https://cran.r-project.org/web/packages/mikropml/vignettes/introduction.html)
+
+#### Question 4 (421/521)
+
+This question should be answered using the `Weekly` data set, which is part of the `ISLR2` package. This data is similar in nature to the `Smarket` data examined in the book (Ch4, lab). First, load the dataset:
+
+```{r}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+  a) Produce some numerical and graphical summaries of the `Weekly` data. Can you identify any patterns? Hint: examine the __correlation__ between predictors.
+
+```{r}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+  b) Use the full data set to perform a logistic regression with Direction as the response and the five `lag` variables plus `Volume` as predictors. Use the summary function to print the results. Do any of the predictors appear to be statistically significant? If so, which ones? Use the glm function to construct the classifier.
+
+```{r}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+
+  c) Compute the __confusion matrix__ and overall fraction of correct predictions. Explain what the confusion matrix is telling you about the types of mistakes made by logistic regression.
+
+```{r}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+  d) Now fit the logistic regression model using a training data period from __1990 to 2008__, with `Lag2` as the only predictor. Compute the confusion matrix and the overall fraction of correct predictions for the held out data (that is, the data from __2009 and 2010__).
+
+```{r}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+  e) Repeat (d) using LDA. 
+
+```{r}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+
+  f) Repeat (d) using QDA. 
+
+```{r}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+
+  g) Repeat (d) using KNN with K=1 
+
+```{r}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+  h) Which of these methods appears to provide the best results on this data?
+
+> **_Answer:_**  [BEGIN SOLUTION].
+
+
+#### Question 5 (521)
+
+Develop a model to predict whether a given car gets high or low gas mileage based on the `Auto` data set. Load the dataset:
+
+```{r}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+
+  a) Create a binary variable, `mpg01`, that contains a `1` if `mpg` contains a value above its median, and a `0` if `mpg` contains a value below its median. You can compute the median using the `median()` function. Note you may find it helpful to use the `data.frame()` function to create a single data set containing both `mpg01` and the other `Auto` variables.
+
+```{r}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+
+  b) __Explore__ the data graphically in order to investigate the association between `mpg01` and the other features. Which of the other features seem most likely to be useful in predicting `mpg01`? _Scatterplots and boxplots may be useful tools to answer this question__. __Describe your findings__.
+
+```{r}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+  c) Split the data into a training set and a test set (70%, 30%). Use `set.seed(4)` to make the training data reproducible.
+
+```{r}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+  (d) Perform LDA on the training data in order to predict `mpg01` using the variables that seemed most associated with `mpg01` in (b). What is the test error of the model obtained?
+
+```{r}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+
+  (e) Perform QDA on the training data in order to predict `mpg01` using the variables that seemed most associated with `mpg01` in (b). What is the test error of the model obtained?
+
+```{r}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+
+  (f) Perform logistic regression on the training data in order to predict `mpg01` using the variables that seemed most associated with `mpg01` in (b). What is the test error of the model obtained?
+
+```{r}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+
+## Extra credit
+
+Suppose that we wish to predict whether a given stock will issue a dividend this year (`Yes` or `No`) based on $X$, last year’s percent profit. We examine a large number of companies and discover that the mean value of $X$ for companies that issued a dividend was $\bar X = 10$, while the mean for those that didn’t was $\bar X = 0$. In addition, the variance of $X$ for these two sets of companies was $\sigma^2=36$. Finally, 80% of companies issued dividends. Assuming that $X$ follows a normal distribution, predict the probability that a company will issue a dividend this year given that its percentage profit was $X = 4$ last year.
+ 
+Hint: Recall that the density function for a normal random variable is $f(x) = \frac{e^{-(x - \mu)^{2}/(2\sigma^{2}) }} {\sigma\sqrt{2\pi}}$. You will need to use Bayes’ theorem.
+
+
+> **_Answer:_**  [BEGIN SOLUTION].
+
+
+
+
