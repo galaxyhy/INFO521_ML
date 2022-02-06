@@ -80,20 +80,22 @@ Let’s examine the differences between LDA and QDA.
   a) If the Bayes decision boundary is linear, do we expect LDA or QDA to perform better on the training set? What about in the test set?
 
 > **_Answer:_**  [BEGIN SOLUTION].
+QDA is more flexible and would fit the training set better. I would expect LDA to perform better on the test set because the parameters are closer to the linear. 
 
   b) If the Bayes decision boundary is non-linear, do we expect LDA or QDA to perform better on the training set? On the test set?
 
 > **_Answer:_**  [BEGIN SOLUTION].
+QDA would be more appropriate for non-linear models.
 
   c) In general, as the sample size n increases, do we expect the test prediction accuracy of QDA relative to LDA to improve, decline, or be unchanged? Why?
 
 > **_Answer:_**  [BEGIN SOLUTION].
-
+As the sample size increases you expect the accuracy of QDA to improve because the QDA is a flexible model. The lda would not be effected because the shape of the linear model won't change so much expect in more accurately predicting things like the intercept and std errors. 
 
   d) __True or False__: Even if the Bayes decision boundary for a given problem is linear, we will probably achieve a superior test error rate using QDA rather than LDA because QDA is flexible enough to model a linear decision boundary. __Justify your answer__.
 
 > **_Answer:_**  [BEGIN SOLUTION].
-
+False. QDA requires a large enough sample to avoid overfitting the model. 
 
 #### Question 2 (421/521)
 
@@ -103,11 +105,12 @@ In relation to the odds and the Default dataset discussed in the book and lectur
   a) On average, what fraction of people with an odds of `0.37` of defaulting on their credit card payment will in fact default?
   
 > **_Answer:_**  [BEGIN SOLUTION].
-
+If p(X)/(1-p(x)) = 0.37, then p(x) is 0.27.
   
   b) Suppose that an individual has a `16%` chance of defaulting on their credit card payment. What are the odds that they will default?
 
 > **_Answer:_**  [BEGIN SOLUTION].
+0.16/(1-0.16) = 0.16/0.84 is eqaul to 0.19. 
 
 
 #### Question 3 (421/521)
@@ -115,7 +118,7 @@ In relation to the odds and the Default dataset discussed in the book and lectur
 Suppose that we take a data set, divide it into equally sized training and test sets, and then try out two different classification procedures. First, we use logistic regression and get an error rate of `20%` on the training data and `30%` on the test data. Next we use 1-nearest neighbors (i.e. `K=1`) and get an average error rate (averaged over both test and training data sets) of `18%`. Based on these results, which method should we prefer to use for classification of new observations? Why?
 
 > **_Answer:_**  [BEGIN SOLUTION].
-
+I would prefer the logistic regression because the KNN method with a K of one is overfitting the model. 
 
 ## Applied
 
@@ -127,6 +130,8 @@ This question should be answered using the `Weekly` data set, which is part of t
 
 ```{r}
 # BEGIN SOLUTION
+library(ISLR2)
+data("Weekly")
 
 # END SOLUTION
 ```
@@ -135,7 +140,25 @@ This question should be answered using the `Weekly` data set, which is part of t
 
 ```{r}
 # BEGIN SOLUTION
+library(tidyverse)
+weekly_gathered <- Weekly %>%
+  ## remove the variables that are factors
+  select(-Direction) %>%
+  gather()
 
+ggplot(weekly_gathered, aes(x = value))+
+  geom_histogram(stat = "bin", bins = 40)+
+  facet_wrap(.~key, scales = "free") +
+  theme(axis.text.x = element_text(angle = 90))
+
+
+pairs(Weekly[ , 1:8],
+      col = "blue",                                         # Change color
+      pch = 18,                                            # Change shape of points
+      labels = c("Year", "Lag1", "Lag2", "Lag3", "Lag4", "Lag5", "Vol", "Today"),
+      main = "Pairs Plot in R") 
+
+cor(Weekly[,-9])
 # END SOLUTION
 ```
 
@@ -143,31 +166,75 @@ This question should be answered using the `Weekly` data set, which is part of t
 
 ```{r}
 # BEGIN SOLUTION
+dir_glm <- glm(Direction ~ Lag1 + Lag2 + Lag3 + Lag4 + Lag5 + Volume, data = Weekly, family = binomial)
 
+summary(dir_glm)
 # END SOLUTION
 ```
 
+Lag2 is slightly significant with a p value of 0.03. 
 
   c) Compute the __confusion matrix__ and overall fraction of correct predictions. Explain what the confusion matrix is telling you about the types of mistakes made by logistic regression.
 
 ```{r}
 # BEGIN SOLUTION
+library(caret)
 
+coef(dir_glm)
+summary(dir_glm)$coef
+
+glm.probs <- predict(dir_glm, type = "response")
+
+glm.pred <- rep("Down", 1089)
+glm.pred[glm.probs > 0.5] = "Up"
+
+# confusion matrix
+table(glm.pred, Weekly$Direction)
+mean(glm.pred == Weekly$Direction)
 # END SOLUTION
 ```
+The diagonal elements where down is down and up is up tells us the true values. 56% of the days were fit correctly. 
 
   d) Now fit the logistic regression model using a training data period from __1990 to 2008__, with `Lag2` as the only predictor. Compute the confusion matrix and the overall fraction of correct predictions for the held out data (that is, the data from __2009 and 2010__).
 
 ```{r}
 # BEGIN SOLUTION
+sample <- (Weekly$Year <= 2008)
+train <- Weekly[sample,]
+test <- Weekly[!sample, ]
+# direction_less <- Weekly$Direction[!train]
 
+### for the confusion matrix of the test data
+test_glm <- glm(Direction ~ Lag2, data = test, family = binomial)
+coef(test_glm)
+summary(test_glm)$coef
+
+test.glm.probs <- predict(test_glm, type = "response")
+
+test.glm.pred <- rep("Down", 104)
+test.glm.pred[test.glm.probs > 0.5] <- "Up"
+
+# confusion matrix
+table(test.glm.pred, test$Direction)
+mean(test.glm.pred == test$Direction)
 # END SOLUTION
 ```
+The percentage of correct predictions were 62.5%. 
 
   e) Repeat (d) using LDA. 
 
 ```{r}
 # BEGIN SOLUTION
+library(MASS) # page 177 in James et al
+lda.fit <- lda(Direction ~ Lag2, family = binomial, data = train)
+lda.fit
+lda.pred <- predict(lda.fit, test)
+names(lda.pred)
+lda.class <- lda.pred$class
+table(lda.class, test$Direction)
+mean(lda.class == test$Direction)
+# sum(lda.pred$posterior[,1] >= .5)
+# sum(lda.pred$posterior[,1] < .5)
 
 # END SOLUTION
 ```
@@ -177,7 +244,13 @@ This question should be answered using the `Weekly` data set, which is part of t
 
 ```{r}
 # BEGIN SOLUTION
+library(MASS)
+qda.fit <- qda(Direction ~ Lag2, data = train)
+qda.fit
 
+qda.class <-predict(qda.fit, test)$class 
+table(qda.class, test$Direction) 
+mean(qda.class == test$Direction)
 # END SOLUTION
 ```
 
@@ -186,6 +259,19 @@ This question should be answered using the `Weekly` data set, which is part of t
 
 ```{r}
 # BEGIN SOLUTION
+library(class)
+# train.X <- cbind(Weekly$Lag1, Weekly$Lag2)[sample,]
+# test.X <- cbind(Weekly$Lag1, Weekly$Lag2)[!sample,]
+sample <- (Weekly$Year <= 2008)
+train.X <- as.data.frame(Weekly$Lag2[sample])
+test.X <- as.data.frame(Weekly$Lag2[!sample])
+train.Direction <- Weekly$Direction[sample]
+
+set.seed(1)
+knn.pred <- knn(train.X, test.X, train.Direction, k=1)
+table(knn.pred, test$Direction)
+
+mean(knn.pred == test$Direction) 
 
 # END SOLUTION
 ```
@@ -193,7 +279,7 @@ This question should be answered using the `Weekly` data set, which is part of t
   h) Which of these methods appears to provide the best results on this data?
 
 > **_Answer:_**  [BEGIN SOLUTION].
-
+LDA and logistic regression modles tended to have the best results. 
 
 #### Question 5 (521)
 
@@ -201,6 +287,8 @@ Develop a model to predict whether a given car gets high or low gas mileage base
 
 ```{r}
 # BEGIN SOLUTION
+data(Auto)
+summary(Auto)
 
 # END SOLUTION
 ```
@@ -210,6 +298,12 @@ Develop a model to predict whether a given car gets high or low gas mileage base
 
 ```{r}
 # BEGIN SOLUTION
+# Auto$mpg01 <- rep(0,length(Auto$mpg))
+# Auto$mpg01[Auto$mpg>median(Auto$mpg)] <- 1
+
+Auto$mpg01 <- ifelse(Auto$mpg > (median(Auto$mpg)),1,0)
+# Auto$mpg01 <- ifelse(Auto$mpg > (median(Auto$mpg)),"high","low")
+Auto$mpg01 <- as.factor(Auto$mpg01)
 
 # END SOLUTION
 ```
@@ -219,14 +313,43 @@ Develop a model to predict whether a given car gets high or low gas mileage base
 
 ```{r}
 # BEGIN SOLUTION
+cor(Auto[,-9:-10])
+pairs(Auto[ , c(1,2,3,4,5,6)],
+      col = "blue",                                         # Change color
+      pch = 18,                                            # Change shape of points
+      labels = c("mpg", "cyl", "displace", "HP", "weight", "accel", "mpg01"),                  # Change labels of diagonal
+      main = "Pairs Plot in R") 
+auto_gathered <- Auto %>%
+  dplyr::select(-origin, -name, -mpg01) %>%
+  gather()
 
+ggplot(auto_gathered, aes(x = value))+
+  geom_histogram(stat = "bin", bins = 40)+
+  facet_wrap(.~key, scales = "free") +
+  theme(axis.text.x = element_text(angle = 90))
+
+par(mfrow=c(2,3))
+boxplot(Auto$mpg~Auto$mpg01,main="mpg vs. mpg01")
+boxplot(Auto$cylinders~Auto$mpg01,main="cylinders vs. mpg01")
+boxplot(Auto$displacement~Auto$mpg01,main="displacement vs. mpg01")
+boxplot(Auto$weight~Auto$mpg01,main="weight vs. mpg01")
+boxplot(Auto$horsepower~Auto$mpg01,main="horsepower vs. mpg01")
 # END SOLUTION
 ```
+
+Weight and horsepower seems to be negatively associated with mpg. Acceleration seems positively affecting mpg. Higher cylinders and displacement also contribute to low mpg. 
 
   c) Split the data into a training set and a test set (70%, 30%). Use `set.seed(4)` to make the training data reproducible.
 
 ```{r}
 # BEGIN SOLUTION
+set.seed(4)
+
+sample_size = round(nrow(Auto)*.70) # setting what is 70%
+index <- sample(seq_len(nrow(Auto)), size = sample_size)
+ 
+train.auto <- Auto[index, ]
+test.auto <- Auto[-index, ]
 
 # END SOLUTION
 ```
@@ -235,28 +358,53 @@ Develop a model to predict whether a given car gets high or low gas mileage base
 
 ```{r}
 # BEGIN SOLUTION
+auto.lda <- lda(mpg01 ~ acceleration + cylinders + weight +    
+                  displacement + horsepower, data = train.auto)
+
+auto.lda
+auto.lda.pred <- predict(auto.lda, test.auto)
+auto.lda.class <- auto.lda.pred$class
+table(auto.lda.class, test.auto$mpg01)
+# mean(knn.pred == Weekly$Direction)
+mean(auto.lda.class != test.auto$mpg01)
 
 # END SOLUTION
 ```
-
+The test error was close to 8.5%. The test error is.  discussed on pages 37, 41, and 175 of James et al 2021.
 
   (e) Perform QDA on the training data in order to predict `mpg01` using the variables that seemed most associated with `mpg01` in (b). What is the test error of the model obtained?
 
 ```{r}
 # BEGIN SOLUTION
+auto.qda.fit <- qda(mpg01 ~ weight + horsepower + acceleration, data = train.auto)
+auto.qda.fit
+
+auto.qda.class <-predict(auto.qda.fit, test.auto)$class 
+table(auto.qda.class, test.auto$mpg01) # not sure if the table was set up correctly
+mean(auto.qda.class != test.auto$mpg01)
 
 # END SOLUTION
 ```
-
+The test error close to 10%. 
 
   (f) Perform logistic regression on the training data in order to predict `mpg01` using the variables that seemed most associated with `mpg01` in (b). What is the test error of the model obtained?
 
 ```{r}
 # BEGIN SOLUTION
+auto.glm.fit <- glm(mpg01 ~ weight + horsepower + acceleration, data = train.auto, family = binomial)
+summary(auto.glm.fit)
 
+# coef(auto.glm.fit)
+# summary(auto.glm.fit)$coef
+
+auto.glm.pred <- predict(auto.glm.fit, test.auto, type = "response")
+# auto.glm.pred <- rep(0, length(auto.glm.probs))
+auto.glm.pred  <- as.factor(ifelse(auto.glm.pred > 0.5, 1, 0))
+table(auto.glm.pred, test.auto$mpg01)
+mean(auto.glm.pred != test.auto$mpg0)
 # END SOLUTION
 ```
-
+The test error obtained from this model was only 6.8%. 
 
 ## Extra credit
 
@@ -267,6 +415,19 @@ Hint: Recall that the density function for a normal random variable is $f(x) = \
 
 > **_Answer:_**  [BEGIN SOLUTION].
 
+prior = Probability(Dividend = yes) = 0.8
 
+likelihood = density.fct(X = 4 | Mean = 10, Variance = 36) = dnorm(4, mean = 10, sd = 6) = 0.0403285
 
+```{r}
+density.fct <- function(x, mu, sigma) {  
+  return(  
+      (1 / sqrt(2 * pi * (sigma^2))) *  
+      exp(-(1/2) * ((x - mu)^2) / (sigma^2))  
+  )  
+}  
+density.fct(4, 10,6) # to calculate the liklihood
+```
+evidence = sum of prior * likelihood for all classes = 0.8 * dnorm(4, mean = 10, sd = 6) + (1 - 0.8) * dnorm(4, mean = 0, sd = 6) = 0.042911
+posterior = prior * likelihood / evidence = (.8*0.0403285)/0.042911 = 0.75185
 
