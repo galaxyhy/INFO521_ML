@@ -1,0 +1,259 @@
+---
+title:  'Homework 5'
+subtitle: 'ISTA 421/INFO 521'
+author:
+- name: Student -  Jung Mee Park
+  affiliation: University of Arizona
+- name: Instructor -  Cristian Roman-Palacios
+  affiliation: School of Information, University of Arizona, Tucson, AZ
+tags: [R, RStudio, HW4]
+output: html_document
+---
+
+---------------
+
+### Objectives
+This homework sheet will help reviewing the basic concepts associated with model selection and regularization. Please review the lectures, suggested readings, and additional resources _before_ getting started on the HW.
+
+---------------
+
+#### Additional resources relevant to this HW
+
+- __R Markdown__: Please review the basic R Markdown cheat sheet in case you have any questions regarding formatting the HW: https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf.
+
+- __R__: Please review the basic R` cheat sheet in case you have any questions regarding the programming language: https://www.soa.org/globalassets/assets/Files/Edu/2018/exam-pa-base-r.pdf.
+
+- __RStudio__: Additional cheat sheets written by RStudio to help with specific `R` packages: https://www.rstudio.com/resources/cheatsheets/
+
+- __Datasets__: The following website has access to the relevant datasets from the recommended textbook: https://book.huihoo.com/introduction-to-statistical-learning/data.html
+
+
+#### The *Tidyverse*
+
+I encourage students to check out functions from packages included in the `tidyverse` (https://www.tidyverse.org/) which greatly facilitates the productivity of novice coders. However, all instructions will be delivered using `Base` `R`. The main textbook also uses base `R` only. I will be happy to grade your code regardless whether it uses base `R` or functions in the `tidyverse.` For some steps, other packages (such as `data.table`) are an appropriate alternative. Most if not all the questions in this HW can be answered using the tidyverse. Please check out the “accompanying” book to our main textbook that uses packages from the tidyverse instead of base (https://emilhvitfeldt.github.io/ISLR-tidymodels-labs/index.html). For this chapter, please follow the instructions in the following site: https://emilhvitfeldt.github.io/ISLR-tidymodels-labs/linear-regression.html. 
+
+
+
+### Scores
+
+Please answer the questions from the section that you’re enrolled in (labeled as either __421__ or __521__). Below is a summary of the total scores associated with this HW (2 points per question).
+
+
+- __ISTA 421__: 8 points (undergraduate)
+- __INFO 521__: 10 points (graduate)
+- __Extra credit__: 3 points
+
+
+### Submission:
+Please follow the instructions outlined below to submit your assignment. __This HW is due at the end of the same week that is released (Sunday, 11:59 pm AZ time)__. Please get in touch with the instructor if you’re (i) having issues opening the assignment, (2) not understanding the questions or (3) having issues submitting your assignment. Note that late submissions are subject to a penalty (see late work policies in the Syllabus).
+
+
+-**Homework 5**: Please turn in a __single RMD file (this file) AND a rendered HTML__. Answers to each question should be in the relevant block of code (see below). Re-name your file to __lastname_Hw5.RMD__ before submitting. __Make sure that you can correctly render (knit) your submission without errors before turning anything in__. If a given block of code is causing you issues and you didn’t get to fix it on time, please use `eval=FALSE` in the relevant block. If you’re using additional files to render your __RMD__, please include each of them in your submission.
+
+
+### Time commitment
+Please do reach out if you’re taking more than ~18h to complete (1) this HW, (2) reading the assigned book chapters, and (3) going over the lectures. I will be happy to provide accommodations if necessary. Do not wait until the last minute to start working on the HW. In most cases, working under pressure will certainly increase the time needed to answer each of these questions. The instructor might not be 100% available on Sundays to troubleshoot with you. Remember that you can sign up for office hours with the instructor 3 times a week.
+
+### Looking for help?
+First, please go over the relevant readings for this week. Second, if you’re still struggling with any of the questions, do some independent research (e.g. stackoverflow is a wonderful resource). __Don’t forget that your classmates will also be working on the same questions - reach out for help (check the Discussion forum in D2L for advice from other students)__. Finally, the instructor will be happy to answer any questions during office hours. You can reach out to me by email (cromanpa94@arizona.edu) or simply schedule a 15 minute meeting through Calendly (https://calendly.com/cromanpa/15min)*
+
+Please do not forget that the instructor holds office hours 3 times a week!!
+
+
+### Grading
+_Please note that grades are NOT exclusively based on your final answers_. I will be grading the overall structure and logic of your code. Feel free to use as many lines as you need to answer each of the questions. I also highly recommend and strongly encourage adding comments (`#`) to your code. Comments will certainly improve the reproducibility and readability of your submission. Commenting your code is also good coding practice. Specifically for the course, you’ll get better feedback if the instructor is able to understand your code in detail.
+
+
+---------------
+
+# Questions
+
+This homework is divided into two main parts. First, a conceptual component will review the basic concepts related to resampling. The second part of the homework is mostly intended to be a brief introduction to regularization methods and resampling in `R`. Several of these questions are modified from James et al. (2021).
+
+
+## Conceptual
+
+#### Question 1 (421/521)
+
+We will derive the probability that a given observation is part of a bootstrap sample. Suppose that we obtain a bootstrap sample from a set of `n` observations. **Don’t forget that samples are obtained with replacement**.
+
+  a) What is the probability that the first bootstrap observation is not the $jth$ observation from the original sample? Justify your answer.
+
+> **_Answer:_**  [BEGIN SOLUTION].
+
+  b) What is the probability that the second bootstrap observation is not the $jth$ observation from the original sample?
+
+> **_Answer:_**  [BEGIN SOLUTION].
+
+  c) Argue that the probability that the $jth$ observation is not in the bootstrap sample is $(1 − 1/n)^n$.
+
+> **_Answer:_**  [BEGIN SOLUTION].
+
+
+  d) When `n = 5`, what is the probability that the $jth$ observation is in the bootstrap sample?
+
+> **_Answer:_**  [BEGIN SOLUTION].
+
+
+  e) When `n = 100`, what is the probability that the $jth$ observation is in the bootstrap sample?
+
+> **_Answer:_**  [BEGIN SOLUTION].
+
+  f) When `n = 1000`, what is the probability that the $jth$ observation is in the bootstrap sample?
+
+> **_Answer:_**  [BEGIN SOLUTION].
+
+
+
+#### Question 2 (421/521)
+
+
+The following questions are relative to k-fold cross-validation.
+
+  a) Explain how k-fold cross-validation is implemented.
+  
+> **_Answer:_**  [BEGIN SOLUTION].
+
+  b) How would you choose the analyzed k? Does that matter? (please cite your sources)
+
+> **_Answer:_**  [BEGIN SOLUTION].
+
+  c) What are the advantages and disadvantages of k-fold cross-validation relative to: *The validation set* approach?
+
+> **_Answer:_**  [BEGIN SOLUTION].
+
+  d) What are the advantages and disadvantages of k-fold cross-validation relative to: *LOOCV*?
+
+> **_Answer:_**  [BEGIN SOLUTION].
+
+
+
+## Applied
+
+Please note that some of the questions outlined below make suggestions on potential functions to be used in the answers. Unless indicated otherwise, feel free to use any other function. For those interested in improving their R skills, I would recommend going over the information in the following book for _tidyverse_ (https://emilhvitfeldt.github.io/ISLR-tidymodels-labs/linear-regression.html), using _caret_ to answer some of the questions (https://topepo.github.io/caret/), or _mikropml_ (https://cran.r-project.org/web/packages/mikropml/vignettes/introduction.html)
+
+#### Question 3 (421/521)
+
+
+  a) What is the following code supposed to do? 
+
+```{r}
+# Simulate some data
+n <- 100
+order <- 2
+x <- runif(n, -4, 4)
+y = rnorm(n = n, mean = x^order, sd = 0.25)
+data <- data.frame(x=x, y=y)
+
+# Number of folds
+n.folds <- 20
+
+# Polynomial orders
+poly.degree <- seq(1, 10)
+
+# List of indices per fold
+indices <- split(seq(n), sort(seq(n) %% n.folds))
+mse.estimates <- c()
+for(q in poly.degree){
+  y.hat <- c()
+  for(fold.idx in indices) {
+    # Fit on K-1 folds
+    ols <- lm(y~poly(x,q), data=data[-fold.idx,])
+    # Predict on the kth fold
+    y.hat[fold.idx] <- predict(ols, newdata=data[fold.idx,])
+  }
+  # Concatenate all predictions
+  y.hat <- unname(unlist(y.hat))
+  # Get the mse estimate
+  mse.estimates[q] <- mean((y.hat - data[, 'y'])^2)
+}
+```
+
+
+> **_Answer:_**  [BEGIN SOLUTION].
+
+
+  b) To the best of your knowledge, improve the structure, content, clarity, and reproducibility of the code presented before in part a) of this question (e.g. would you run a single or multiple replicates?). Fix any mistakes (if you find any). Finally, generate at least two plots summarizing your findings regarding the best-fitting polynomial order on the simulated dataset (also from part a): (1) MSE vs polynomial order, and (2) x vs y, along with a plot of the selected model.
+  
+  
+```{r}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+
+#### Question 4 (421/521)
+
+Bootstrap the following dataset (`n = 1000`) to obtain median and 95% CI for parameter estimates (slope and intercept) summarizing the relationship between `x` and `y_measured.` What happens with median parameter estimates when you examine `y` instead? Your solution **must** use `for` and `sample` Provide some visualizations to explain your results.
+
+```{r}
+set.seed(1)
+nobs <- 100
+x <- rnorm(nobs)
+y <- x-2*x^2
+y_measured <- y + rnorm(nobs)
+
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+#### Question 5 (521)
+
+We will predict the number of applications received using the other variables in the College data set. Please load the relevant dataset first.
+
+  a) Split the data set into a training set and a test set.
+
+```{r}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+  b) Fit a linear model using least squares on the training set, and report the test error obtained.
+
+```{r}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+  c) Fit a ridge regression model on the training set, with $\lambda$ chosen by cross-validation. Report the test error obtained.
+  
+  
+```{r}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+
+  d) Fit a lasso model on the training set, with $\lambda$ chosen by cross-validation. Report the test error obtained, along with the number of non-zero coefficient estimates.
+
+```{r}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+
+
+## Extra credit
+
+What is the best polynomial order (1–20) modeling the structure of the following dataset (`x` vs `y`)? Your answer should include a numerical approach (e.g. MSE estimates) along with a convincing set of visuals supporting your answer.
+
+```{r}
+set.seed(4)
+n <- 1000
+x <- runif(n, -4, 4)
+mu <- ifelse(x > 0, cos(4*x), 1-sin(x))
+y <- mu + rnorm(n)
+data <- data.frame(x=x, y=y)
+plot(x, y, col="black",  pch=21, bg="steelblue", ylab = "y")
+lines(x[order(x)], mu[order(x)], col="red", lwd=3, type="l")
+legend("bottomleft", legend=c("E[Y|X=x], truth", "Data"), cex=.8, lty=c(1, NA), col=c("red","steelblue"),  pch=c(NA, 21), pt.bg=c(NA, "steelblue"))
+```
+
+
+
