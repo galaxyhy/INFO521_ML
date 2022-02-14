@@ -146,6 +146,15 @@ Please note that some of the questions outlined below make suggestions on potent
 
 #### Question 3 (421/521)
 
+```{r message=FALSE}
+#load libraries
+library(MASS)
+library(caret)
+library(ISLR2)
+library(glmnet)
+library(leaps)
+library(tidyverse)
+```
 
   a) What is the following code supposed to do? 
 
@@ -222,7 +231,6 @@ plot(poly.degree, mse.estimates, main="MSE estimates (K-fold cross-validation)",
 which.min(mse.estimates) # 2
 # 
 
-library(tidyverse)
 xy_plot <- ggplot(data=data, aes(x = x, y = y)) +
   # facet_wrap(~ z, nrow=1, ncol=2) +
   geom_line(color="red") + 
@@ -291,7 +299,8 @@ median.boot
 # plotting for y_measured 
 xy_measured_plot <- ggplot(data2, aes(x=x1, y=y_measured)) +
   geom_point() + 
-  geom_smooth(method = "lm")
+  geom_smooth(method = "lm") +
+  ggtitle("Plot for X and Y-measured")
 xy_measured_plot
 
 # for y 
@@ -322,7 +331,6 @@ d <-
         quantile(sample_coef_x1_for_y, prob = 0.975))
 d
 
-
 # median parameter estimates for y 
 median.boot1 <- c(median(sample_coef_intercept1), median(sample_coef_x1_for_y))
 median.boot1 
@@ -330,12 +338,14 @@ median.boot1
 # plotting for y
 xy_plot <- ggplot(data2, aes(x=x1, y=y1)) +
   geom_point() +
-  geom_smooth(method = "lm") 
+  geom_smooth(method = "lm") +
+  ggtitle("Plot for X and Y")
 xy_plot
 
 # END SOLUTION
 ```
 
+The plot of x and y show a straight line. The plot of x and y_measured had more values that deviated from the line.  
 #### Question 5 (521)
 
 We will predict the number of applications received using the other variables in the College data set. Please load the relevant dataset first.
@@ -362,16 +372,13 @@ test.College <- College[-index, ]
 
 ```{r}
 # BEGIN SOLUTION
-library(MASS)
-library(caret)
-
-college.lm <- lm(Apps ~ Grad.Rate + Outstate + Top10perc + Expend, data = train.College)
+college.lm <- lm(Apps ~ ., data = train.College)
 summary(college.lm) # residual standard error is 13.65
 
 y_hat_train <- predict(college.lm, data = train.College)
-train_MSE <- mean((train.College$Grad.Rate - y_hat_train)^2)
+train_MSE <- mean((train.College$Apps - y_hat_train)^2)
 
-ggplot(train.College, aes(x = Apps, y=Grad.Rate)) +
+ggplot(train.College, aes(x = Apps, y=Top10perc)) +
     geom_point() + 
     geom_smooth(method = "lm") +
     scale_y_continuous(limits = c(0, 100)) 
@@ -391,13 +398,10 @@ ggplot(train.College, aes(x = Apps, y=Grad.Rate)) +
   
 ```{r}
 # BEGIN SOLUTION
-library(ISLR2)
-library(glmnet)
-library(leaps)
 # choosing a model using CV
 
-# ridge regression
-matrix_mod <- model.matrix(Apps ~ Grad.Rate + Outstate + Top10perc + Expend, data = train.College)
+# # ridge regression
+matrix_mod <- model.matrix(Apps ~ ., data = train.College)
 
 grid <- 10^seq(10, -2, length=100)
 ridge.mod <- glmnet(matrix_mod, train.College$Apps, alpha = 0, lambda = grid)
@@ -413,14 +417,16 @@ sqrt(sum(coef(ridge.mod)[-1,50]^2)) # Calculate l2 norm
 x_train = model.matrix(Apps~., train.College)[,-1]
 x_test = model.matrix(Apps~., test.College)[,-1]
 
-ridge_mod = glmnet(x_train, train.College$Apps, alpha=0, lambda = grid, thresh = 1e-12)
+# ridge_mod with all the variables
+ridge_mod <- glmnet(x_train, train.College$Apps, alpha=0, lambda = grid, thresh = 1e-12)
 ridge_pred = predict(ridge_mod, s = 4, newx = x_test)
+
 # for test MSE
 mean((ridge_pred - test.College$Apps)^2) # the test MSE is 912817
 
 # # for training MSE
 # mean((mean(train.College$Apps) - test.College$Apps)^2) # 9970586
-# 
+#
 # # to find a better lambda
 # # ridge_pred = predict(ridge_mod, s = 0, newx = x_test, exact = T)
 # mean((ridge_pred - test.College$Apps)^2)
@@ -429,13 +435,55 @@ mean((ridge_pred - test.College$Apps)^2) # the test MSE is 912817
 set.seed(1)
 cv.out = cv.glmnet(x_train, train.College$Apps, alpha = 0) # Fit ridge regression model on training data
 bestlam = cv.out$lambda.min  # Select lamda that minimizes training MSE
-bestlam
+bestlam #322
 
 # plot to see the smallest lamda
 plot(cv.out)
 
 ridge_pred = predict(ridge_mod, s = bestlam, newx = x_test) # Use best lambda to predict test data
-mean((ridge_pred - test.College$Apps)^2) # Calculate test MSE which was 900285.5
+mean((ridge_pred - test.College$Apps)^2) # Calculate test MSE which was 3197161
+
+# out <- glmnet(ridge.mod, train.College$Apps, alpha = 0) # Fit ridge regression on a small model
+# predict(out, type = "coefficients", s = bestlam) # Display coefficients using lambda chosen by CV
+
+# another approach
+#define response variable
+y2 <- train.College$Apps
+#define matrix of predictor variables
+x2 <- data.matrix(train.College[, c("Private", "Accept", "Top10perc", "Top25perc", "Outstate", "Room.Board", "Expend", "Grad.Rate")])
+
+#fit ridge regression model
+model <- glmnet(x2, y2, alpha = 0)
+#view summary of model
+summary(model)
+
+#perform k-fold cross-validation to find optimal lambda value
+cv_model <- cv.glmnet(x2, y2, alpha = 0)
+
+#find optimal lambda value that minimizes test MSE
+best_lambda <- cv_model$lambda.min
+best_lambda
+
+#produce plot of test MSE by lambda value
+plot(cv_model)
+
+#find coefficients of best model
+best_model <- glmnet(x2, y2, alpha = 0, lambda = best_lambda)
+coef(best_model)
+
+#produce Ridge trace plot
+plot(model, xvar = "lambda")
+
+#use fitted best model to make predictions
+y_predicted <- predict(model, s = best_lambda, newx = x2)
+
+#find SST and SSE
+sst <- sum((y2 - mean(y2))^2)
+sse <- sum((y_predicted - y2)^2)
+sse
+#find R-Squared
+rsq <- 1 - sse/sst
+rsq
 
 # END SOLUTION
 ```
@@ -445,7 +493,7 @@ mean((ridge_pred - test.College$Apps)^2) # Calculate test MSE which was 900285.5
 
 ```{r}
 # BEGIN SOLUTION
-lasso_mod = glmnet(x_train, 
+lasso_mod <- glmnet(x_train, 
                    train.College$Apps, 
                    alpha = 1, 
                    lambda = grid) # Fit lasso model on training data
@@ -462,14 +510,43 @@ lasso_pred = predict(lasso_mod, s = bestlam, newx = x_test) # Use best lambda to
 mean((lasso_pred - test.College$Apps)^2) # Calculate test MSE
 
 out <- glmnet(matrix_mod, train.College$Apps, alpha = 1, lambda = grid) # Fit lasso model on full dataset
-lasso_coef <- predict(out, type = "coefficients", s = bestlam)[1:8,] # Display coefficients using lambda chosen by CV
+lasso_coef <- predict(out, type = "coefficients", s = bestlam) # Display coefficients using lambda chosen by CV
 lasso_coef
 
 lasso_coef[lasso_coef != 0] # Display only non-zero coefficients
+
+# # another approach 
+# #perform k-fold cross-validation to find optimal lambda value
+# cv_model_lasso <- cv.glmnet(x2, y2, alpha = 1)
+# 
+# #find optimal lambda value that minimizes test MSE
+# best_lambda_lasso <- cv_model_lasso$lambda.min
+# best_lambda_lasso
+# 
+# [1] 5.616345
+# 
+# #produce plot of test MSE by lambda value
+# plot(cv_model) 
+# 
+# #find coefficients of best model
+# best_model_lasso <- glmnet(x2, y2, alpha = 1, lambda = best_lambda_lasso)
+# coef(best_model_lasso)
+# 
+# #use fitted best model to make predictions
+# y_predicted_lasso <- predict(best_model_lasso, s = best_lambda_lasso, newx = x2)
+# 
+# #find SST and SSE
+# sst_lasso <- sum((y2 - mean(y2))^2)
+# sse_lasso <- sum((y_predicted_lasso - y2)^2)
+# 
+# #find R-Squared
+# rsq_lasso <- 1 - sse_lasso/sst_lasso
+# rsq_lasso
+
 # END SOLUTION
 ```
 
-
+So there may be 17 non-zero coefficients. 
 
 ## Extra credit
 
@@ -489,4 +566,39 @@ legend("bottomleft", legend=c("E[Y|X=x], truth", "Data"), cex=.8, lty=c(1, NA), 
 
 # Look at code in Question 3
 
+```{r}
+# CODE from Qu3. Simulate some data
+# n <- 100
+# order <- 2
+# x <- runif(n, -4, 4)
+# y = rnorm(n = n, mean = x^order, sd = 0.25)
+# data <- data.frame(x=x, y=y)
+
+# Number of folds 
+n.folds1 <- 20 #(K)
+
+# Polynomial orders
+poly.degree1 <- seq(1, 10) 
+
+# List of indices per fold
+indices <- split(seq(n), sort(seq(n) %% n.folds1))
+mse.estimates1 <- c()
+for(q in poly.degree1){
+  y.hat <- c()
+  for(fold.idx in indices) {
+    # Fit on K-1 folds
+    ols <- lm(y~poly(x,q), data=data[-fold.idx,])
+    # Predict on the kth fold
+    y.hat[fold.idx] <- predict(ols, newdata = data[fold.idx,])
+  }
+  # Concatenate all predictions
+  y.hat <- unname(unlist(y.hat))
+  # Get the mse estimate
+  mse.estimates1[q] <- mean((y.hat - data[, 'y'])^2)
+}
+
+plot(poly.degree1, mse.estimates1, main="MSE estimates (K-fold cross-validation)", xlab="Polynomial degree", ylab="MSE estimate", type="l", lty=2, col=2)
+which.min(mse.estimates) # 10
+# 
+```
 
