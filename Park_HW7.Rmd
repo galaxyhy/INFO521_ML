@@ -1,0 +1,253 @@
+---
+title:  'Homework 7'
+subtitle: 'ISTA 421/INFO 521'
+author:
+- name: Student -  Jung Mee Park
+  affiliation: University of Arizona
+- name: Instructor -  Cristian Roman-Palacios
+  affiliation: School of Information, University of Arizona, Tucson, AZ
+tags: [R, RStudio, HW7]
+output: html_document
+---
+
+---------------
+
+### Objectives
+This homework sheet will help reviewing the basic concepts associated with tree-based methods and provide a basic introduction to the ML workflow using real-world datasets. Please review the lectures, suggested readings, and additional resources _before_ getting started on the HW.
+
+---------------
+
+#### Additional resources relevant to this HW
+
+- __R Markdown__: Please review the basic R Markdown cheat sheet in case you have any questions regarding formatting the HW: https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf.
+
+- __R__: Please review the basic R` cheat sheet in case you have any questions regarding the programming language: https://www.soa.org/globalassets/assets/Files/Edu/2018/exam-pa-base-r.pdf.
+
+- __RStudio__: Additional cheat sheets written by RStudio to help with specific `R` packages: https://www.rstudio.com/resources/cheatsheets/
+
+- __Datasets__: The following website has access to the relevant datasets from the recommended textbook: https://book.huihoo.com/introduction-to-statistical-learning/data.html
+
+
+#### The *Tidyverse*
+
+I encourage students to check out functions from packages included in the `tidyverse` (https://www.tidyverse.org/) which greatly facilitates the productivity of novice coders. However, all instructions will be delivered using `Base` `R`. The main textbook also uses base `R` only. I will be happy to grade your code regardless whether it uses base `R` or functions in the `tidyverse.` For some steps, other packages (such as `data.table`) are an appropriate alternative. Most if not all the questions in this HW can be answered using the tidyverse. Please check out the “accompanying” book to our main textbook that uses packages from the tidyverse instead of base (https://emilhvitfeldt.github.io/ISLR-tidymodels-labs/index.html). For this chapter, please follow the instructions in the following site: https://emilhvitfeldt.github.io/ISLR-tidymodels-labs/linear-regression.html. 
+
+
+
+### Scores
+
+Please answer the questions from the section that you’re enrolled in (labeled as either __421__ or __521__). Below is a summary of the total scores associated with this HW (2 points per question).
+
+
+- __ISTA 421__/__INFO 521__: 6 points
+- __Brief final project__: 20 points
+
+### Submission:
+Please follow the instructions outlined below to submit your assignment. __This HW is due on the end of the last day of classes (Friday, March 4, 2022, 11:59 pm AZ time)__. Please get in touch with the instructor if you’re (i) having issues opening the assignment, (2) not understanding the questions or (3) having issues submitting your assignment. Note that late submissions are subject to a penalty (see late work policies in the Syllabus).
+
+
+-**Homework 7**: Please turn in a __single RMD file (this file) AND a rendered HTML__. Answers to each question should be in the relevant block of code (see below). Re-name your file to __lastname_Hw7.RMD__ before submitting. __Make sure that you can correctly render (knit) your submission without errors before turning anything in__. If a given block of code is causing you issues and you didn’t get to fix it on time, please use `eval=FALSE` in the relevant block. If you’re using additional files to render your __RMD__, please include each of them in your submission.
+
+
+### Time commitment
+Please do reach out if you’re taking more than ~18h (per each week) to complete (1) this HW, (2) reading the assigned book chapters, and (3) going over the lectures. I will be happy to provide accommodations if necessary. Do not wait until the last minute to start working on the HW. In most cases, working under pressure will certainly increase the time needed to answer each of these questions. The instructor might not be 100% available on Sundays to troubleshoot with you. Remember that you can sign up for office hours with the instructor 3 times a week.
+
+### Looking for help?
+First, please go over the relevant readings for this week. Second, if you’re still struggling with any of the questions, do some independent research (e.g. stackoverflow is a wonderful resource). __Don’t forget that your classmates will also be working on the same questions - reach out for help (check the Discussion forum in D2L for advice from other students)__. Finally, the instructor will be happy to answer any questions during office hours. You can reach out to me by email (cromanpa94@arizona.edu) or simply schedule a 15 minute meeting through Calendly (https://calendly.com/cromanpa/15min)*
+
+Please do not forget that the instructor holds office hours 3 times a week!!
+
+
+### Grading
+_Please note that grades are NOT exclusively based on your final answers_. I will be grading the overall structure and logic of your code. Feel free to use as many lines as you need to answer each of the questions. I also highly recommend and strongly encourage adding comments (`#`) to your code. Comments will certainly improve the reproducibility and readability of your submission. Commenting your code is also good coding practice. Specifically for the course, you’ll get better feedback if the instructor is able to understand your code in detail.
+
+
+---------------
+
+# Questions
+
+This homework is divided into three main sections. The first two sections (i.e. conceptual and applied) follow a similar structure as in previous HWs – they evaluate your knowledge on topics discussed during the week. The third section is a brief independent project. 
+
+
+## Conceptual
+
+#### Question 1 (421/521)
+
+Draw an example (of your own invention) of a partition of two-dimensional feature space that could result from recursive binary splitting. Your example should contain at least six regions. Draw a decision tree corresponding to this partition. Be sure to label all aspects of your figures, including the regions $R_1$, $R_2$, ... , the cutpoints $t_1$ , $t_2$, ..., and so forth. Please insert your sketch below.
+
+  > **_Answer:_**  [BEGIN SOLUTION].
+```{r}
+# modify
+par(xpd = NA)
+plot(NA, NA, type = "n", xlim = c(0,100), ylim = c(0,100), xlab = "X", ylab = "Y")
+# t1: x = 40; (40, 0) (40, 100)
+lines(x = c(40,40), y = c(0,100))
+text(x = 40, y = 108, labels = c("t1"), col = "red")
+# t2: y = 75; (0, 75) (40, 75)
+lines(x = c(0,40), y = c(75,75))
+text(x = -8, y = 75, labels = c("t2"), col = "red")
+# t3: x = 75; (75,0) (75, 100)
+lines(x = c(75,75), y = c(0,100))
+text(x = 75, y = 108, labels = c("t3"), col = "red")
+# t4: x = 20; (20,0) (20, 75)
+lines(x = c(20,20), y = c(0,75))
+text(x = 20, y = 80, labels = c("t4"), col = "red")
+# t5: y=25; (75,25) (100,25)
+lines(x = c(75,100), y = c(25,25))
+text(x = 70, y = 25, labels = c("t5"), col = "red")
+
+text(x = (40+75)/2, y = 50, labels = c("R1"))
+text(x = 20, y = (100+75)/2, labels = c("R2"))
+text(x = (75+100)/2, y = (100+25)/2, labels = c("R3"))
+text(x = (75+100)/2, y = 25/2, labels = c("R4"))
+text(x = 30, y = 75/2, labels = c("R5"))
+text(x = 10, y = 75/2, labels = c("R6"))
+```
+
+
+#### Question 2 (421/521)
+
+Suppose we produce ten bootstrapped samples from a data set containing red and green classes. We then apply a classification tree to each bootstrapped sample and, for a specific value of $X$, produce $10$ estimates of $P(Class is Red|X)$:
+
+$0.1$, $0.15$, $0.2$, $0.2$, $0.55$, $0.6$, $0.6$, $0.65$, $0.7$, and $0.75$.
+
+There are two common ways to combine these results together into a single class prediction. One is the majority vote approach discussed in this week's lecture and readings. The second approach is to classify based on the average probability. In this example, what is the final classification under each of these two approaches?
+
+  > **_Answer:_**  [BEGIN SOLUTION].
+  By classifying X as Red, the majority vote approach aggregates 10 predictions (6 for Red vs 4 for Green). The average probability approach classifies X as Green and the average probabilities equals 0.45.
+x = all the probabilities. mean(x) > 0.5
+mean(x>0.5)>0.5
+
+## Applied
+
+#### Question 3  (421/521)
+
+Apply boosting and random forest to a data set of your choice. Feel free to use any of the datasets in the `ISLR` R package (e.g. `College`) to examine any of the questions that were discussed in any of the previous homeworks. Be sure to fit the models on a training set and to evaluate their performance on a test set. How accurate are the results compared to simple methods (e.g. linear or logistic regression models)? Which of these approaches yields the best performance?
+
+```{r}
+# BEGIN SOLUTION
+library(ISLR2)
+library(randomForest)
+data("College")
+
+# END SOLUTION
+```
+
+
+## Brief independent project
+
+In this part of the assignment, you will be provided with two options of basic ML code used to examine a given question. __Assume that this code was sent to you by a collaborator who is asking for your help in improving their ML workflow.__ 
+
+1. Critically examine the steps outlined by your collaborator (e.g. data pre-processing, model development) with the goal of improving the performance of the model given the specific research question. 
+2. Reconsider and re-evaluate their data pre-processing steps.
+3. Generate an alternative model. Your alternative model can be of the same class as the baseline model (but not necessarily).
+4. Finally, you will compare your new model to the one suggested by your collaborator. If your model does not outperform your collaborator's model, briefly examine why this was the case.
+
+__Please justify your decisions.__ For instance, explain why you decided to plot Y vs X and not Y vs Z; why 20% of observations in the F feature were inputted using mean values; why model N was selected and not M; or even why model performance is solely examined based on accuracy. 
+
+__I’m looking for systematic and well-justified decisions.__ I am interested in reading thoughtful discussions on the potential practical consequences of your decisions. Hint: Assume that you’re explaining this to your collaborator. __Please be brief and focus on your major decisions__. Your grade will be based on your ability to explain your choices and not the length of your submission. Please do not forget to annotate your code.
+
+Your submission (also part of this Rmd; see below) should include only the following sections (also below under __Report__):
+
+##### Synopsis
+A brief (<300 words) description of the dataset, goals of the analysis, methods used, main results, and conclusions.
+
+##### Data pre-processing
+Steps related to missing data, reduction of dimensionality, training and test data splits, center, scale, creating dummy variables, etc
+
+##### Data exploration
+Correlation analyses, scatterplots, class imbalance, etc
+
+##### Model development
+This component should include descriptions on why a given model was used, how each of the examined models was designed (e.g. are you using all the features in the dataset?), tuning (if needed), and model evaluation. 
+
+##### Conclusions
+Frame your conclusions in two different ways (<300 words). First, conclude on the question that is being addressed in your selected project. Second, compare the performance of your approach in relation to your collaborator's model. 
+
+
+Choose one of the two options below. 
+
+__Option 1__. Your collaborator is interested in implementing a new model to classify patients into sick or not sick categories  (http://archive.ics.uci.edu/ml/datasets/thyroid+disease). _They are particularly concerned with the number of times their model fails to correctly classify truly sick patients._ Feel free to use any of the variables in the dataset, reconsider the data pre-processing approach, explore other models, data partitions, etc.
+
+```{r message=FALSE, warning=FALSE}
+library(tidymodels)
+
+Data1Raw <- read.csv('https://datahub.io/machine-learning/sick/r/sick.csv')
+
+Data1 <- Data1Raw %>%
+  select(-TBG, -TBG_measured, -hypopituitary, -TSH, -T3, -TT4, -T4U, -FTI) %>%
+  mutate(Class = factor(Class, levels = c("sick", "negative"), labels = c("1", "0")))
+
+lr <- logistic_reg()%>%
+  set_mode("classification") %>%
+  set_engine("glm")
+
+lr_fit <- lr %>%
+  fit(
+    Class ~ .,
+    data = Data1
+  )
+
+augment(lr_fit, new_data = Data1) %>%
+  conf_mat(truth = Class, estimate = .pred_class)
+```
+
+
+__Option 2__. Your collaborator is generating a model to predict the duration of flight delays (`dep_delay`+`arr_delay` in the `flights` dataset). _They will be only convinced that your model is better if you are able to reduce uncertainty around predictions for a novel observation (`newObs`)._ Feel free to use any of the variables in the dataset, reconsider the data pre-processing approach, explore other models, data partitions, etc.
+Hint: Consider the trade-offs associated with the overall model error and prediction error for a particular observation. Consider explaining this to your collaborator.
+
+```{r}
+library(nycflights13)
+library(dplyr)
+set.seed(5)
+
+flights2 <- flights %>%
+  mutate(delay = dep_delay+arr_delay)
+
+newObs <- data.frame(lapply(flights2, sample, size= 1))
+
+sample_id <- sample(1:nrow(flights2), nrow(flights2) * 0.75)
+flights_train <- flights2[sample_id,]
+flights_test <- flights2[-sample_id, ]
+
+deModel <- lm(delay ~ distance, data = flights_train)
+predict(deModel, newObs, interval="prediction", level=0.95)
+```
+
+
+### Report
+
+##### Synopsis
+
+  > **_Answer:_**  [BEGIN SOLUTION].
+
+##### Data pre-processing
+
+```{r}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+##### Data exploration
+
+```{r}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+##### Model development
+
+```{r}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+##### Conclusions
+
+  > **_Answer:_**  [BEGIN SOLUTION].
+
+
+
