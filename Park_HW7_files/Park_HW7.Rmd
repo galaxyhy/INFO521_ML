@@ -276,6 +276,7 @@ flights_test <- flights2[-sample_id, ]
 
 deModel <- lm(delay ~ distance, data = flights_train)
 predict(deModel, newObs, interval="prediction", level=0.95)
+
 ```
 
 
@@ -289,6 +290,41 @@ predict(deModel, newObs, interval="prediction", level=0.95)
 
 ```{r}
 # BEGIN SOLUTION
+library(tidyverse)
+library(tidyr)
+library(pander) 
+library(caret)
+library(lubridate)
+library(VIM)
+
+# subset data for numerical
+flights_num <- select_if(flights2, is.numeric)
+
+# look for NAs
+colsums(is.na(flights2))
+flights2[rowSums(is.na(flights2)) > 0, ]   
+mice_plot <- aggr(flights_num, col=c('blue', 'yellow'), numbers=TRUE, sortVars=T)
+
+# impute missing values
+library(Hmisc)
+flights2$arr_delay_imp <- with(flights2, impute(arr_delay, mean))
+flights2$delay_imp <- with(flights2, impute(delay, mean))
+flights2$dep_time_imp <- with(flights2, impute(dep_time, mean))
+
+# training/testing split - mostly repeating the provided code
+set.seed(5)
+
+flights2 <- flights2 %>%
+  mutate(delay = dep_delay+arr_delay)
+
+newObs <- data.frame(lapply(flights2, sample, size= 1))
+
+sample_id <- sample(1:nrow(flights2), nrow(flights2) * 0.75)
+flights_train <- flights2[sample_id,]
+flights_test <- flights2[-sample_id, ]
+
+deModel <- lm(delay ~ distance, data = flights_train)
+predict(deModel, newObs, interval="prediction", level=0.95)
 
 # END SOLUTION
 ```
@@ -297,7 +333,41 @@ predict(deModel, newObs, interval="prediction", level=0.95)
 
 ```{r}
 # BEGIN SOLUTION
+library(statsr)
 
+flights_train %>% map(mean)
+
+flights_train %>% map_dbl(mean, na.rm = TRUE)
+summary(flights_train)
+
+flights_train %>%
+  group_by(origin) %>%
+  na.omit() %>% 
+  summarise(mean_dd = mean(dep_delay), sd_dd = sd(dep_delay), n =n())
+
+flights_train %>%
+  group_by(origin) %>%
+  na.omit() %>% 
+  summarise(mean_ad = mean(arr_delay), sd_ad = sd(arr_delay), n_arr =n())
+# plot dep delay by origin
+ggplot(data= flights_train, aes(x= origin, y= dep_delay, fill = origin)) +   
+  geom_violin()
+  
+ggplot(data= flights_train, aes(x= origin, y= arr_delay, fill = origin)) +   
+  geom_violin()
+
+# group by months
+flights_train %>%
+  na.omit() %>% 
+  group_by(month) %>%
+  summarise(mean_dd = mean(dep_delay)) %>%
+  arrange(month)
+
+flights_train %>%
+  na.omit() %>% 
+  group_by(month) %>%
+  summarise(mean_ad = mean(arr_delay)) %>%
+  arrange(month)
 # END SOLUTION
 ```
 
