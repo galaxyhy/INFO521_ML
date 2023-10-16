@@ -1,0 +1,280 @@
+---
+title:  'Homework 1'
+subtitle: 'ISTA 421/INFO 521'
+author:
+- name: Student -  Heeyoung Kim
+  affiliation: School of Information, University of Arizona
+- name: Instructor -  Xuan Lu
+  affiliation: School of Information, University of Arizona, Tucson, AZ
+tags: [R, RStudio, HW1]
+output: html_document
+---
+
+---------------
+
+### Objectives
+This worksheet will assess your knowledge of basic commands in `R`. Please review the lectures, suggested readings, and additional resources **before** getting started on the HW as this document closely follows the provided materials.
+
+
+---------------
+
+## Additional files related to this HW
+In `D2L`, you will find the following additional files associated to this homework:
+
+- **1_Lab.RMD**: An annotated markdown style document to introduce `R`. If you’re not familiar with `R`, please **review** this document before going over this HW. This document is related to the intro to `R` presented in the main textbook for this course.
+
+
+- **2_BasicR.R**: An annotated `R` script with different questions (used in the extra credit for HW1). There is also a quick recording posted in `D2L` of the instructor reviewing the code in this script.
+
+
+#### Additional resources relevant to this HW
+- **R Markdown**: Please review the basic R Markdown cheat sheet in case you have any questions regarding formatting the HW: https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf.
+
+- **R**: Please review the basic `R` cheat sheet in case you have any questions regarding the programming language: https://www.soa.org/globalassets/assets/Files/Edu/2018/exam-pa-base-r.pdf.
+
+- **RStudio**: Additional cheat sheets written by RStudio to help with specific R packages: https://www.rstudio.com/resources/cheatsheets/
+
+- **Datasets**: The following website has access to the relevant datasets from the recommended textbook: https://book.huihoo.com/introduction-to-statistical-learning/data.html
+
+
+#### The *Tidyverse*
+
+I encourage students to check out functions from packages included in the `tidyverse` (https://www.tidyverse.org/) which greatly facilitates the productivity of novice coders. However, all the instruction will be delivered using `Base` `R`. The main textbook also uses base `R` only. I will be happy to grade your code regardless whether it uses base `R` or functions in the `tidyverse`. For some steps, other packages (such as `data.table`) are an appropriate alternative. Most if not all the questions in this HW can be answered using the `tidyverse`. Please check out the “accompanying” book to our main textbook that uses packages from the `tidyverse` instead of base (https://emilhvitfeldt.github.io/ISLR-tidymodels-labs/index.html).
+
+
+
+### Scores
+
+Please answer the questions from the section that you’re enrolled in (labeled as either **421** or **521**). Below is a summary of the total scores associated with this HW for undergraduates and graduate students.
+
+
+- **ISTA421**: 9 points (undergraduate)
+- **INFO521**: 12 points (graduate)
+- **Extra credit** (ISTA421/INFO521): +3 points 
+
+
+### Submission:
+Please follow the instructions outlined below to submit your assignment. This HW is due at the end of the same week that is released (**Sunday, 11:59 pm AZ time**). Please get in touch with the instructor if you’re (i) having issues opening the assignment, (2) not understanding the questions or (3) having issues submitting your assignment. Note that late submissions are subject to a penalty (see late work policies in the Syllabus).
+
+
+-**Homework 1**: Please turn in a single `RMD` file (this file) and a rendered `HTML` (hint: knit your `rmd`; link: https://rmarkdown.rstudio.com/lesson-9.html). Answers to each question should be in the relevant block of code (see below). Re-name your file to `lastname_Hw1.RMD` before submitting. Make sure that you can correctly render  your submission without errors before turning anything in. If a given block of code is causing issues and you didn’t get to fix it, please use `r eval=FALSE `the in the relevant block and add comments.
+
+-**Extra credit**: An annotated R script. Re-name your file to `lastname_Hw1_EC.RMD` before submitting.
+
+### Time commitment
+Please reach out if you’re taking more than ~18h (~9h for the first week) to complete (1) this HW, (2) reading the book chapters, and (3) going over the lectures. I will be happy to provide accommodations if necessary. **Do not wait until the last minute to start working on this HW**. In most cases, working under pressure will certainly increase the time needed to answer each of these questions and the instructor might not be 100% available on Sundays to troubleshoot with you. Remember that you can sign up office hours with the instructor 3 times a week.
+
+
+
+### Looking for help?
+First, please go over the relevant readings for this week. Second, if you’re still struggling with any of the questions, do some independent research (e.g. stackoverflow is a wonderful resource). Don’t forget that your classmates will also be working on the same questions - reach out for help (check under the Discussion forum for folks looking to interact with other students in this class or start your own thread). Finally, the instructor will be happy to answer any questions during office hours. You can reach out to me by email (cromanpa94@arizona.edu) or simply schedule a 15 minute meeting through **Calendly** (https://calendly.com/cromanpa/15min). **Do not forget that the instructor holds office hours 3 times a week!!**
+
+### Grading
+Please note that grades are **NOT exclusively based on your final answers**. I will be grading the overall structure and logic of your code. Feel free to use as many lines as you need to answer each of the questions. I also highly recommend and strongly encourage adding comments (`#`) to your code. Comments will certainly improve the reproducibility and readability of your submission. Commenting your code is also good coding practice. **Specifically for the course, you’ll get better feedback if the instructor is able to understand your code in detail.**
+
+
+---------------
+
+# Questions
+Each question is worth a single point. Please answer only the questions labeled with the section that you’re enrolled in. 
+
+**NOTE**: If you’re enrolled in ISTA 421 and decide to answer questions labeled as 521, the instructor will grade them for extra credit. However, students enrolled in ISTA421 are **NOT** required to answer questions labeled as 521.
+
+
+#### Question 1 (421/521)
+Assign the value `26` to a variable `x` and create a vector `y` with the values 
+`[2, 36, 1, 98, 124]`. Multiply those vectors component-wise and save the 
+result in an object `z`. Calculate the sum of all elements in `z` and save your results in a new object named `Q1`.
+	
+```{r Your answer to Q1}
+# BEGIN SOLUTION
+
+# Assign the value `26` to a variable `x`
+x <- 26
+
+# create a vector `y`
+y <- c(2, 36, 1, 98, 124)
+
+# Multiply x and y and save the result in z
+z <- x * y
+
+# Calculate the sum of all elements in 'z' and save the result in 'Q1'
+Q1 <- sum(z)
+
+# END SOLUTION
+```
+	
+#### Question 2 (421/521)
+Generate a sequence from `21` to `400` and a second sequence from `2` to `-35`.
+Save your results in new objects named `Q2.1` and `Q2.2`, respectively.
+
+```{r Your answer to Q2}
+# BEGIN SOLUTION
+
+# Generate a sequence from '21' to '400' and save as Q2.1
+Q2.1 <- seq(21, 400)
+
+# Generate a sequence from 2 to -35 and save as Q2.2
+Q2.2 <- seq(2, -35)
+
+# END SOLUTION
+```
+	
+#### Question 3 (421/521)
+Generate a sequence from `−3` to `9` by `0.1` steps.
+Save your results in a new object named `Q3`.
+	
+```{r Your answer to Q3}
+# BEGIN SOLUTION
+
+# Generate a sequence from '-3' to '9' by `0.1` steps and save as Q3
+Q3 <- seq(-3, 9, by = 0.1)
+
+# END SOLUTION
+```
+
+#### Question 4 (421/521)
+Randomly sample 100 times a total of 20 elements (with replacement) from `Q3`. Save your results in a new object of class `list` named `Q4`.
+Suggestion: use a `loop`, `while`, `lapply`, etc.
+	
+```{r Your answer to Q4}
+# BEGIN SOLUTION
+
+# Randomly sample 100 times a total of 20 elements
+samples <- 100
+sample_size <- 20
+
+# Use lapply to generate a list of samples
+Q4 <- lapply(1:samples, function(i) sample(Q3, size = sample_size, replace = TRUE))
+
+# Print the first few samples of Q4
+print(Q4[1:5])
+
+# END SOLUTION
+```
+
+#### Question 5 (421/521)
+Define two vectors with the following information. First, `t` includes the strings `mon`, `tue`, `wed`, `thu`, `fri`, `sat`. Second, vector `m` includes `[90, 80, 50, 20, 5, 20]`. Bind both vectors column-wise 
+into a `data.frame` with `6` rows and `2` columns. Save this a new object named `Q5.`
+	
+```{r Your answer to Q5}
+# BEGIN SOLUTION
+
+# Define t and m
+t <- c("mon", "tue", "wed", "thu", "fri", "sat")
+m <- c(90, 80, 50, 20, 5, 20)
+
+# Create a data frame
+Q5 <- data.frame(t, m)
+
+# Print
+print(Q5)
+
+# END SOLUTION
+```
+
+#### Question 6 (421/521)
+Create three vectors of length 100 named `weight` (mean=`81`, sd=`0.26`; units=Kg),  `height` (mean=`1.76`, sd=`0.22`; units=m), and `age` (mean=`25`, sd =`5`; units=years) by randomly sampling three normal distributions using the `stats::rnorm` function. 
+Generate a fourth vector `gender` with the same length as `height` but by 
+randomly sampling (with replacement) from the following vector `["A", "B", "C"]`.
+
+```{r Your answer to Q6}
+# BEGIN SOLUTION
+
+# Set the random seed
+set.seed(123)
+
+# Create vectors weight, height, and age by sampling from normal distributions
+weight <- rnorm(100, mean = 81, sd = 0.26)  # units: Kg
+height <- rnorm(100, mean = 1.76, sd = 0.22)  # units: m
+age <- rnorm(100, mean = 25, sd = 5)  # units: years
+
+# Create the gender vector by sampling from ["A", "B", "C"] with replacement
+gender <- sample(c("A", "B", "C"), size = 100, replace = TRUE)
+
+# Combine the vectors into a data frame
+data <- data.frame(Weight = weight, Height = height, Age = age, Gender = gender)
+
+# Print the first few rows of the data frame
+head(data)
+
+
+
+# END SOLUTION
+```
+	
+#### Question 7 (421/521)
+Create a `data.frame` by combining the four vectors created above in **Question 6** 
+as columns. Add a new column (`BMI`) with only `NAs.` Save your results in a new object named `Q7`.
+
+```{r Your answer to Q7}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+	
+	
+#### Question 8 (421/521)
+Generate a variable selection (e.g. `if`/`else` statement) that contains the result to the logical query of `age` under `20` and above `30`. This new vector should be added as a new column to `Q7` named `AgeGroup`. The new dataset should be saved as `Q8`.
+
+```{r Your answer to Q8}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+#### Question 9 (421/521)
+Calculate the “Body Mass Index” (BMI; see the equation below) for all people in the `Q8` `data.frame`. Store the results in the `BMI` column in the same `data.frame`. Save the resulting object as `Q9`.
+
+$$
+BMI = \frac{Weight_{(Kg)}} {Height_{(m)}^2}
+$$
+
+```{r Your answer to Q9}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+	
+#### Question 10 (521)
+Create a function that calculates the BMI (see equation above). It should take only two arguments (`height` and `weight`) and it should return a numerical vector. This function must be saved as `function_Q10`. **You must show that this function works** (e.g. run `function_Q10` using `height` and `weight` columns from `Q9`).
+
+```{r Your answer to Q10}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+#### Question 11 (521)
+Create a function that calculates the mean `BMI` for a particular gender. This function (`function_Q11`) must take only two arguments.
+First, a `data.frame` (with or without `BMI` estimates). Second, a target gender (see levels in **Question 6**). This function must be saved as `function_Q11`. You must show that the function 
+calculates the mean BMI for a particular gender (e.g. run `function_Q11` with gender `A`).
+
+```{r Your answer to Q11}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+
+#### Question 12 (521)
+Append a new column (`BMIc`, see below) to the `Q9` `data.frame` with a new vector that corrects `BMI` values according to 
+the `AgeGroup` column. Specifically, the new column (`BMIc`) should follow
+the structure: if a participant's age is within the target age group 
+(`TRUE` for the `AgeGroup` column), add `10%` to the original `BMI.` 
+If not, use the original `BMI` estimate. Save the resulting `data.frame` as `Q12`.
+
+```{r Your answer to Q12}
+# BEGIN SOLUTION
+
+# END SOLUTION
+```
+
+---------------
+
+# Extra credit (421/521)
+Follow the `R` script that accompanies this homework (`2_BasicR.R`). 
+Please make notes, add new lines, make changes, and briefly answer the questions 
+included within the script.
+
+
